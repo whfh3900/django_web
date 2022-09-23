@@ -1,0 +1,59 @@
+<!doctype html>
+{% load static %}
+<html lang="ko">
+ <head>
+  	<meta charset="UTF-8">
+	 
+  	<meta name="Author" content="">
+  	<meta name="Keywords" content="">
+  	<meta name="Description" content="">
+
+  	<title>Real? ATS</title>
+	
+	<link href="{% static 'p/css/ats.css' %}" rel="stylesheet">
+	<script src="{% static 'p/js/jquery-3.1.0.min.js' %}"></script>
+	<script src="{% static 'p/js/nic_ui.js' %}"></script> 
+
+ </head>
+ <body>
+  
+  <div id="wrap" >
+	
+	<!-- 헤더 -->
+	<div class="header">
+		<div class="h_inner">
+			<span href="#" class="logo_ats">적요자동태깅서비스</span>			
+			<button type="button" class="history_open h_disable">이력조회</button>
+		</div>
+	</div>	
+	<!--// 헤더 -->
+
+	<!-- 컨텐츠 -->
+	<div class="Section_01">		
+		<form action="{% url 'home' %}" method="post">
+			{% csrf_token %}
+			<div class="login_area">
+				<span class="txt_cGrey">발급된 계정으로 로그인 하세요.</span>
+				<input class="input_id" name="userID" type="text" placeholder="ID"/>
+				<input class="input_id" name="password" type="password" placeholder="Password"/>
+				<button type="submit" class="btn_01">로그인</button>
+			</div>
+			{% if messages %}
+				{% for message in messages %}
+					<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+				{% endfor %}
+			{% endif %}	
+		</form>
+	</div>
+	<!--// 컨텐츠 -->
+
+	<!-- 푸터 -->
+	<div class="footer_w">
+		<p>ⓒ NIC company</p>
+	</div>	  
+	<!--// 푸터 -->
+
+  </div>
+
+ </body>
+</html>
