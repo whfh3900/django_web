@@ -18,38 +18,53 @@ import datetime
 
 @csrf_exempt
 def home(request):
-    if request.method == "GET":
-        return render(request, 'UI-JO-00-00.html')
+    return render(request, 'UI-MA-00-00.html')
 
+
+
+@csrf_exempt
+def ats_login(request):
+    if request.method == "GET":
+        logout(request)
+        return render(request, "UI-AT-JO-00.html")
+    
     elif request.method == "POST":
         userID = request.POST['userID']
+        print('----------------')
+        print(userID)
+        print('----------------')
+
         password = request.POST['password']
         user = authenticate(request, username=userID, password=password)
 
         if user is not None:
             login(request, user)
             data_list = DataTable.objects.filter(member_id=userID).values('new_file_name','pro_dtime','data_len','pro_result')
-            name = list(AuthUser.objects.filter(username=userID).values('first_name','last_name'))[0]
-            name = name['first_name']+name['last_name']
-            context = {'data_list':data_list, 'userID':userID, 'name':name, 'data_len':len(data_list)}
+            # name = list(AuthUser.objects.filter(username=userID).values('first_name','last_name'))[0]
+            # name = name['first_name']+name['last_name']
+            # context = {'data_list':data_list, 'userID':userID, 'name':name, 'data_len':len(data_list)}
+            context = {'data_list':data_list, 'userID':userID, 'data_len':len(data_list), 'a':'aaaaaaaaaaaaaaaaaaaa'}
             
             # Redirect to a success page.
-            return render(request, 'UI-DA-00-00.html', context)
+            return render(request, 'UI-AT-DA-00.html', context)
         else:
             # Return an 'invalid login' error message.
-            messages.error(request,'ID 혹은 비밀번호가 일치하지 않습니다.')
-            return render(request, 'UI-JO-00-00.html')
-
+            raise
+            
 
 @csrf_exempt
 def tagging(request):
     if request.method == "GET":
-        return render(request, 'UI-DA-00-00.html')
+        return render(request, 'UI-AT-DA-00.html')
 
     elif request.method == "POST":
         file = request.FILES.get("testFile")
         userID = request.POST["userID"]
         file_name = request.POST["filename"]
+        
+        print('--------------------------')
+        print(userID, file_name)
+        print('--------------------------')
 
         for chunk in file.chunks():
             try:
@@ -152,9 +167,9 @@ def tagging(request):
         return JsonResponse({"message":"데이터 처리가 완료되었습니다.<br><b>파일</b>을 다운로드하세요.", "filename":new_file_name}, status=200)
 
 @csrf_exempt
-def download(request):
+def complete_download(request):
     if request.method == "GET":
-        return render(request, 'UI-DA-00-00.html')
+        return render(request, 'UI-AT-DA-00.html')
 
     elif request.method == "POST":
         new_file_name = request.POST["download_file"]
@@ -164,4 +179,19 @@ def download(request):
         response = FileResponse(fs.open(file_name, 'rb'),
                                 content_type='application/vnd.ms-excel')
         response['Content-Disposition'] = 'attachment; filename="{}"'.format(new_file_name)
-        return response        
+        return response
+
+
+@csrf_exempt
+def introduction_download(request):
+    if request.method == "GET":
+        return render(request, 'UI-MA-00-00.html')
+
+    elif request.method == "POST":
+        
+        file_path = os.path.dirname('./file/') 
+        file_name = os.path.basename('소개서.pdf')
+        fs = FileSystemStorage(file_path)
+        response = FileResponse(fs.open(file_name, 'rb'))
+        response['Content-Disposition'] = 'attachment; filename="{}"'.format('소개서.pdf')
+        return response
