@@ -33,21 +33,27 @@ def ats_login(request):
         userID = request.POST['userID']
         password = request.POST['password']
         user = authenticate(request, username=userID, password=password)
+        global context
 
-        if user is not None:
-            global context
-            login(request, user)
-            data_list = DataTable.objects.filter(member_id=userID).values('new_file_name','pro_dtime','data_len','pro_result')
-            name = list(AuthUser.objects.filter(username=userID).values('first_name','last_name'))[0]
-            name = name['first_name']+name['last_name']
-            context = {'data_list':data_list, 'userID':userID, 'name':name, 'data_len':len(data_list)}
-            # Redirect to a success page.
-            # return render(request, 'UI-AT-DA-00.html', context)
-            return render(request, 'UI-AT-DA-00.html', context)
+        try:
 
-        else:
-            # Return an 'invalid login' error message.
-            return JsonResponse({"message":"not found ID or PW!"}, status=200)
+            if user is not None:    
+                login(request, user)
+                data_list = DataTable.objects.filter(member_id=userID).values('new_file_name','pro_dtime','data_len','pro_result')
+                name = list(AuthUser.objects.filter(username=userID).values('first_name','last_name'))[0]
+                name = name['first_name']+name['last_name']
+                context = {'data_list':data_list, 'userID':userID, 'name':name, 'data_len':len(data_list)}
+                # Redirect to a success page.
+                return render(request, 'UI-AT-DA-00.html', context)
+
+            else:
+                # Return an 'invalid login' error message.
+                context['error'] = 'Not found ID or PW!'
+                return render(request, "UI-AT-JO-00.html", context)
+
+        except Exception as e:
+            context['error'] = 'Please write ID or PW!'
+            return render(request, "UI-AT-JO-00.html", context)
             
 
 @csrf_exempt
@@ -183,13 +189,31 @@ def complete_download(request):
         return render(request, 'UI-AT-DA-00.html')
 
     elif request.method == "POST":
-        new_file_name = request.POST["download_file"]
+        new_file_name = request.POST["new_file_name"]
         file_path = os.path.dirname('./save/%s'%new_file_name) 
         file_name = os.path.basename('./save/%s'%new_file_name)
+
         fs = FileSystemStorage(file_path)
         response = FileResponse(fs.open(file_name, 'rb'),
                                 content_type='application/vnd.ms-excel')
         response['Content-Disposition'] = 'attachment; filename="{}"'.format(new_file_name)
+        return response
+
+@csrf_exempt
+def history_download(request):
+    if request.method == "GET":
+        return render(request, 'UI-AT-DA-00.html')
+
+    elif request.method == "POST":
+        history_file_name = request.POST["history_file_name"]
+        file_path = os.path.dirname('./save/%s'%history_file_name) 
+        file_name = os.path.basename('./save/%s'%history_file_name)
+
+        
+        fs = FileSystemStorage(file_path)
+        response = FileResponse(fs.open(file_name, 'rb'),
+                                content_type='application/vnd.ms-excel')
+        response['Content-Disposition'] = 'attachment; filename="{}"'.format(history_file_name)
         return response
 
 

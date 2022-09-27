@@ -81,9 +81,10 @@
 			<ul>
 				<li>
 					<!-- <a href='data:application/csv;charset=utf-8,ABc,DEF,GHI,JKL' download="{{i.file_name}}">{{i.file_name}}</a> -->
-					<form id="history" method="POST" action="{% url 'complete_download' %}" enctype="multipart/form-data">
+					<form id="history" method="POST" action="{% url 'history_download' %}" enctype="multipart/form-data">
 						{% csrf_token %}
-						<input type="submit" name="download_file" id="download_file" value="{{i.new_file_name}}"/>
+						<!-- <input type="hidden" name="new_file_name" id="new_file_name"/> -->
+						<input type="submit" name="history_file_name" id="history_file_name" value="{{i.new_file_name}}"/>
 					</form>
 				</li>
 				<li>{{i.pro_dtime}}</li>
@@ -109,7 +110,7 @@
 	<!-- 컨텐츠 -->
 	<div class="Section_02">
 		<div class="cont_area">			
-			<span class="txt_cGrey">거래구분(code)/거래유형(text)/적요(text)가 포함된 데이터를 업로드 하세요. 
+			<span class="txt_cGrey">거래구분(code)/거래유형(text)/적요(text)가 포함된 데이터를 업로드 하세요. (encoding='utf-8')
 			<b>처리 가능 데이터는 100만 건</b> 입니다. </span>
 
 			<!-- v 1.7.1 -->
@@ -133,7 +134,7 @@
 				<!-- 다운로드시 보이는 버튼-->
 				<form id="download" method="POST" action="{% url 'complete_download' %}" enctype="multipart/form-data">
 					<div id="download_box" style="display:none">
-						<input type="hidden" name="download_file" id="download_file"/>
+						<input type="hidden" name="new_file_name" id="new_file_name"/>
 						<input type="submit" id="download_btn" class="btn_01" value="다운로드"/>
 					</div>
 				</form>
