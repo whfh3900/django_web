@@ -42,11 +42,6 @@
 			<a type="button" class="btn_X" href="{% url 'home' %}"></a>
 		</div>
 		
-		<!-- <div style="display:none"> -->
-		<div>
-			<span id="userID"> {{ userID }} </span>
-		</div>
-		
 	</div>	
 	<!--// 헤더 -->	
 	
@@ -82,11 +77,12 @@
 				<!-- <li>100만</li> -->
 				<!-- <li>정상</li> -->
 			<!-- </ul> -->
-			{% for i in data_list%}
+			{% for i in data_list %}
 			<ul>
 				<li>
 					<!-- <a href='data:application/csv;charset=utf-8,ABc,DEF,GHI,JKL' download="{{i.file_name}}">{{i.file_name}}</a> -->
 					<form id="history" method="POST" action="{% url 'complete_download' %}" enctype="multipart/form-data">
+						{% csrf_token %}
 						<input type="submit" name="download_file" id="download_file" value="{{i.new_file_name}}"/>
 					</form>
 				</li>
@@ -108,7 +104,8 @@
 	
 	<i class="modal"></i>
 	 <!--// 이력 팝업 -->
-	  
+	 
+	 
 	<!-- 컨텐츠 -->
 	<div class="Section_02">
 		<div class="cont_area">			
@@ -120,14 +117,12 @@
 				<form id="tagging" method="POST" onsubmit="return false;" enctype="multipart/form-data">
 					{% csrf_token %}
 					<div class="file_box">
-						<input class="btn_uplode btn-file d-none" type="file" name="testFile" id="testFile" style="" />
+						<input class="btn_uplode btn-file d-none" type="file" name="testFile" id="testFile"/>
 						<!--<input class="btn-file d-none" type="file" id="testFile" style="display:none" />-->
-						<label for="testFile"></label> 
+						<!-- <label for="testFile"></label>  -->
 						<span id="testFileNm" class="file_upload">여기에 csv 파일을 놓거나 '+' 버튼을 클릭하세요</span>
 						<div class="btn_l"></div>
 					</div>
-
-
 					<!-- class에서 disable 제거하면 버튼 활성 -->
 					<!-- <button type="button" class="btn_01"  onclick="popOpen2()">카테고리 태깅 시작</button> -->
 					<div id="tag_box">

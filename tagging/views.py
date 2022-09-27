@@ -16,6 +16,7 @@ from ats_module.TextTagging import *
 import datetime
 
 
+
 @csrf_exempt
 def home(request):
     return render(request, 'UI-MA-00-00.html')
@@ -30,23 +31,20 @@ def ats_login(request):
     
     elif request.method == "POST":
         userID = request.POST['userID']
-        print('----------------')
-        print(userID)
-        print('----------------')
-
         password = request.POST['password']
         user = authenticate(request, username=userID, password=password)
 
         if user is not None:
+            global context
             login(request, user)
             data_list = DataTable.objects.filter(member_id=userID).values('new_file_name','pro_dtime','data_len','pro_result')
-            # name = list(AuthUser.objects.filter(username=userID).values('first_name','last_name'))[0]
-            # name = name['first_name']+name['last_name']
-            # context = {'data_list':data_list, 'userID':userID, 'name':name, 'data_len':len(data_list)}
-            context = {'data_list':data_list, 'userID':userID, 'data_len':len(data_list), 'a':'aaaaaaaaaaaaaaaaaaaa'}
-            
+            name = list(AuthUser.objects.filter(username=userID).values('first_name','last_name'))[0]
+            name = name['first_name']+name['last_name']
+            context = {'data_list':data_list, 'userID':userID, 'name':name, 'data_len':len(data_list)}
             # Redirect to a success page.
+            # return render(request, 'UI-AT-DA-00.html', context)
             return render(request, 'UI-AT-DA-00.html', context)
+
         else:
             # Return an 'invalid login' error message.
             raise
@@ -54,118 +52,131 @@ def ats_login(request):
 
 @csrf_exempt
 def tagging(request):
-    if request.method == "GET":
-        return render(request, 'UI-AT-DA-00.html')
+    if request.user.is_authenticated:
+        if request.method == "GET":
+            return render(request, 'UI-AT-DA-00.html')
 
-    elif request.method == "POST":
-        file = request.FILES.get("testFile")
-        userID = request.POST["userID"]
-        file_name = request.POST["filename"]
-        
-        print('--------------------------')
-        print(userID, file_name)
-        print('--------------------------')
+        elif request.method == "POST":
+            file = request.FILES.get("testFile")
+            userID = context["userID"]
+            file_name = request.POST["filename"]
 
-        for chunk in file.chunks():
-            try:
-                file_chunk = chunk.decode('utf-8-sig')
-            except UnicodeDecodeError:
-                error_log = "다음의 인코딩 형식을 지원합니다. <b>(utf-8)</b>"
+            for chunk in file.chunks():
+                try:
+                    file_chunk = chunk.decode('utf-8-sig')
+                except UnicodeDecodeError:
+                    error_log = "다음의 인코딩 형식을 지원합니다. <b>(utf-8)</b>"
+                    return JsonResponse({"error": error_log}, status=403)
+
+            
+            chunks = file_chunk.replace('\r\n', ',')
+            chunk_list = chunks.split(',')[:-1]
+            columns = chunk_list[0:3]
+
+            true_columns = ["거래구분","거래유형","적요"]
+
+            for i,n in enumerate(columns):
+                if n not in true_columns:
+                    error_log = "%s 컬럼이 없습니다. 데이터 형식을 확인하세요.<br><b>(필수컬럼: %s) 에러->%s</b>"%(true_columns[i], str(true_columns), n)
+                    return JsonResponse({"error": error_log}, status=403)
+
+            chunk_list = chunk_list[3:]
+            data_len = int(round(len(chunk_list)/3, 0))
+            
+            if data_len > 1000000:
+                error_log = "<b>1000000건</b> 이내만 처리 가능합니다.<br>파일을 다시 업로드 하세요."
                 return JsonResponse({"error": error_log}, status=403)
 
-        chunks = file_chunk.replace('\r\n', ',')
-        chunk_list = chunks.split(',')[:-1]
-        columns = chunk_list[0:3]
+            new_file_name = file_name.split('.')[0]+'_'+datetime.datetime.now().strftime("%Y%m%d%H%M%S")+'.csv'
 
-        true_columns = ["자동이체정보","입출금","적요"]
-        for i,n in enumerate(columns):
-            if n not in true_columns:
-                error_log = "%s 컬럼이 없습니다. 데이터 형식을 확인하세요.<br><b>(필수컬럼: %s) 에러->%s</b>"%(true_columns[i], str(true_columns), n)
-                return JsonResponse({"error": error_log}, status=403)
+            df = pd.DataFrame(columns=["index","거래구분","원적요","전처리적요","대분류","중분류","비고"])
+            
+            nk = Nickonlpy()
+            nwt = NicWordTagging()
+            trans_md = False
+            stat = '정상'
 
-        chunk_list = chunk_list[3:]
-        data_len = int(round(len(chunk_list)/3, 0))
+            for i,n in enumerate(chunk_list):
+                df.at[int(i/3), "index"] = int(i/3)
+                if i%3 == 0:
+                    if n in ['1', '2']:
+                        trans_md = n
+                        df.at[int(i/3), "거래구분"] = n
+
+                if i%3 == 2:
+                
+                    protable = ProTable()
+                    protable.member_id = userID
+                    protable.file_name = file_name
+                    protable.new_file_name = new_file_name
+                    protable.trans_md = trans_md
+                    protable.ori_text = n
+                    df.at[int(i/3), "원적요"] = n
+
+                    # preprocessing
+                    text = find_null(n)
+                    text = ascii_check(text)
+                    text = corporatebody(text)
+                    text = remove_specialchar(text)
+                    text = numbers_check(text)
+                    text = find_null(text)
+                    text = nk.predict_tokennize(text)
+                    protable.pro_text = text
+                    df.at[int(i/3), "전처리적요"] = text                
+                    
+                    
+                    #######################################                
+                    if (trans_md) and (text not in ["", " ", "  "]):
+                        # tagging
+                        result = nwt.text_tagging(text, trans_md)
+
+                        protable.first_tag = result[0]
+                        protable.second_tag = result[1]
+                        df.at[int(i/3), "대분류"] = result[0]
+                        df.at[int(i/3), "중분류"] = result[1]
+                        trans_md = False
+
+                    elif (trans_md) and (text in ["", " ", "  "]):
+                        stat = '공백'
+                        protable.first_tag = "공백"
+                        protable.second_tag = "공백"
+                        df.at[int(i/3), "대분류"] = ""
+                        df.at[int(i/3), "중분류"] = ""
+                        protable.note = "200"
+                        df.at[int(i/3), "비고"] = "[200]" # 해당하는 데이터가 없을때 발생하는 코드
+
+                    else:
+                        stat = '에러'
+                        protable.first_tag = ""
+                        protable.second_tag = ""
+                        df.at[int(i/3), "대분류"] = ""
+                        df.at[int(i/3), "중분류"] = ""
+                        protable.note = "333"
+                        df.at[int(i/3), "비고"] = "[333]" # 요청위치 값의 타입이 유효하지 않을 때 발생하는 코드
+
+
+                    protable.event_dtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    protable.note = "000"
+                    df.at[int(i/3), "비고"] = "[000]" # 정상작동
+
+
+                    protable.save()
+
+            df.to_csv('./save/%s'%new_file_name, encoding="utf-8-sig", index=False)
+
+            datatable = DataTable()
+            datatable.member_id = userID
+            datatable.file_name = file_name
+            datatable.new_file_name = new_file_name
+            datatable.pro_dtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            datatable.data_len = str(data_len)+'건'
+            datatable.pro_result = stat
+            datatable.save()
+
+            return JsonResponse({"message":"데이터 처리가 완료되었습니다.<br><b>파일</b>을 다운로드하세요.", "filename":new_file_name}, status=200)
+    else:
+            return JsonResponse({"message":"please login!"}, status=200)
         
-        if data_len > 10:
-            error_log = "<b>10건</b> 이내만 처리 가능합니다.<br>파일을 다시 업로드 하세요."
-            return JsonResponse({"error": error_log}, status=403)
-
-        new_file_name = file_name.split('.')[0]+'_'+datetime.datetime.now().strftime("%Y%m%d%H%M%S")+'.csv'
-
-        df = pd.DataFrame(columns=["index","trans_md","ori_text","pro_text","first_tag","second_tag","note"])
-        
-        nk = Nickonlpy()
-        nwt = NicWordTagging()
-        trans_md = False
-        stat = '정상'
-        
-        for i,n in enumerate(chunk_list):
-            df.at[int(i/3), "index"] = int(i/3)
-            if i%3 == 1:
-                if n in ['지급', '입금']:
-                    trans_md = n
-                    df.at[int(i/3), "trans_md"] = n
-
-            if i%3 == 2:
-                protable = ProTable()
-                protable.member_id = userID[1:-1]
-                protable.file_name = file_name
-                protable.new_file_name = new_file_name
-                protable.trans_md = trans_md
-                protable.ori_text = n
-                df.at[int(i/3), "ori_text"] = n
-
-                # preprocessing
-                text = find_null(n)
-                text = ascii_check(text)
-                text = corporatebody(text)
-                text = remove_specialchar(text)
-                text = numbers_check(text)
-                text = find_null(text)
-                text = nk.predict_tokennize(text)
-                protable.pro_text = text
-                df.at[int(i/3), "pro_text"] = text
-
-                if trans_md:
-                    # text to sequences
-                    # text = nwt.text_to_sequences(text)
-                    # tagging
-                    result = nwt.text_tagging(text, trans_md)
-
-                    protable.first_tag = result[0]
-                    protable.second_tag = result[1]
-                    df.at[int(i/3), "first_tag"] = result[0]
-                    df.at[int(i/3), "second_tag"] = result[1]
-                    trans_md = False
-
-                else:
-                    stat = '에러'
-                    protable.first_tag = ""
-                    protable.second_tag = ""
-                    df.at[int(i/3), "first_tag"] = ""
-                    df.at[int(i/3), "second_tag"] = ""
-                    protable.note = "333"
-                    df.at[int(i/3), "note"] = "[333]"
-
-                protable.event_dtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                protable.note = "000"
-                df.at[int(i/3), "note"] = "[000]"
-
-                protable.save()
-
-        df.to_csv('./save/%s'%new_file_name, encoding="utf-8-sig")
-
-        datatable = DataTable()
-        datatable.member_id = userID[1:-1]
-        datatable.file_name = file_name
-        datatable.new_file_name = new_file_name
-        datatable.pro_dtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        datatable.data_len = str(data_len)+'건'
-        datatable.pro_result = stat
-        datatable.save()
-
-        return JsonResponse({"message":"데이터 처리가 완료되었습니다.<br><b>파일</b>을 다운로드하세요.", "filename":new_file_name}, status=200)
-
 @csrf_exempt
 def complete_download(request):
     if request.method == "GET":

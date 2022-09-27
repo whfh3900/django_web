@@ -53,7 +53,8 @@
 	<div class="Section_01">
 		{% csrf_token %}
 		<div class="login_area">			
-			<form id="login_check" method="POST" onsubmit="return false;" enctype="multipart/form-data">
+			<form id="login_check" method="POST" enctype="multipart/form-data">
+
 				<span class="txt_cGrey">발급된 계정으로 로그인 하세요.</span>
 				<input class="input_id" id="userID" name="userID" type="text" placeholder="ID"/>
 				<input class="input_id" id="password" name="password" type="password" placeholder="Password"/>
