@@ -47,7 +47,7 @@ def ats_login(request):
 
         else:
             # Return an 'invalid login' error message.
-            raise
+            return JsonResponse({"message":"not found ID or PW!"}, status=200)
             
 
 @csrf_exempt
