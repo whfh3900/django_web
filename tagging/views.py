@@ -70,9 +70,11 @@ def tagging(request):
             for chunk in file.chunks():
                 try:
                     file_chunk = chunk.decode('utf-8-sig')
-                except UnicodeDecodeError:
-                    error_log = "다음의 인코딩 형식을 지원합니다. <b>(utf-8)</b>"
-                    return JsonResponse({"error": error_log}, status=403)
+                except UnicodeDecodeError as e:
+                    error_log = "다음의 인코딩 형식을 지원합니다.(utf-8) %s"%e 
+                    response = JsonResponse({"success":False, "error": error_log})
+                    response.status_code = 403
+                    return response
 
             
             chunks = file_chunk.replace('\r\n', ',')
@@ -83,19 +85,24 @@ def tagging(request):
 
             for i,n in enumerate(columns):
                 if n not in true_columns:
-                    error_log = "%s 컬럼이 없습니다. 데이터 형식을 확인하세요.<br><b>(필수컬럼: %s) 에러->%s</b>"%(true_columns[i], str(true_columns), n)
-                    return JsonResponse({"error": error_log}, status=403)
+                    error_log = "%s 컬럼이 없습니다. 데이터 형식을 확인하세요.(필수컬럼: %s) Error columns : %s"%(true_columns[i], str(true_columns), n)
+                    response = JsonResponse({"success":False, "error": error_log})
+                    response.status_code = 403
+                    return response
 
             chunk_list = chunk_list[3:]
             data_len = int(round(len(chunk_list)/3, 0))
+
             
             if data_len > 1000000:
-                error_log = "<b>1000000건</b> 이내만 처리 가능합니다.<br>파일을 다시 업로드 하세요."
-                return JsonResponse({"error": error_log}, status=403)
+                error_log = "1000000건 이내만 처리 가능합니다. 파일을 다시 업로드 하세요."
+                response = JsonResponse({"success":False, "error": error_log})
+                response.status_code = 403
+                return response
 
             new_file_name = file_name.split('.')[0]+'_'+datetime.datetime.now().strftime("%Y%m%d%H%M%S")+'.csv'
 
-            df = pd.DataFrame(columns=["index","거래구분","원적요","전처리적요","대분류","중분류","비고"])
+            df = pd.DataFrame(columns=["index","거래구분","적요","대분류","중분류"])
             
             nk = Nickonlpy()
             nwt = NicWordTagging()
@@ -117,7 +124,7 @@ def tagging(request):
                     protable.new_file_name = new_file_name
                     protable.trans_md = trans_md
                     protable.ori_text = n
-                    df.at[int(i/3), "원적요"] = n
+                    df.at[int(i/3), "적요"] = n
 
                     # preprocessing
                     text = find_null(n)
@@ -128,7 +135,6 @@ def tagging(request):
                     text = find_null(text)
                     text = nk.predict_tokennize(text)
                     protable.pro_text = text
-                    df.at[int(i/3), "전처리적요"] = text                
                     
                     
                     #######################################                
@@ -149,7 +155,6 @@ def tagging(request):
                         df.at[int(i/3), "대분류"] = ""
                         df.at[int(i/3), "중분류"] = ""
                         protable.note = "200"
-                        df.at[int(i/3), "비고"] = "[200]" # 해당하는 데이터가 없을때 발생하는 코드
 
                     else:
                         stat = '에러'
@@ -158,12 +163,10 @@ def tagging(request):
                         df.at[int(i/3), "대분류"] = ""
                         df.at[int(i/3), "중분류"] = ""
                         protable.note = "333"
-                        df.at[int(i/3), "비고"] = "[333]" # 요청위치 값의 타입이 유효하지 않을 때 발생하는 코드
 
 
                     protable.event_dtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                     protable.note = "000"
-                    df.at[int(i/3), "비고"] = "[000]" # 정상작동
 
 
                     protable.save()
@@ -179,7 +182,7 @@ def tagging(request):
             datatable.pro_result = stat
             datatable.save()
 
-            return JsonResponse({"message":"데이터 처리가 완료되었습니다.<br><b>파일</b>을 다운로드하세요.", "filename":new_file_name}, status=200)
+            return JsonResponse({"message":"데이터 처리가 완료되었습니다. 파일을 다운로드하세요.", "filename":new_file_name}, status=200)
     else:
             return JsonResponse({"message":"please login!"}, status=200)
         
