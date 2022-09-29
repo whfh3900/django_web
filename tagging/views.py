@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from .models import DataTable, AuthUser, ProTable
 from django.http import JsonResponse, FileResponse
-from django.core.files.storage import FileSystemStorage
+from django.core.files.storage import default_storage
 
 import pandas as pd
 #import logging
@@ -16,12 +16,9 @@ from ats_module.TextTagging import *
 import datetime
 
 
-
 @csrf_exempt
 def home(request):
     return render(request, 'UI-MA-00-00.html')
-
-
 
 @csrf_exempt
 def ats_login(request):
@@ -57,30 +54,26 @@ def tagging(request):
             return render(request, 'UI-AT-DA-00.html')
 
         elif request.method == "POST":
-            file = request.FILES.get("testFile")
+            # file = request.FILES.get("testFile")
+            file = request.FILES["testFile"]
             userID = context["userID"]
             file_name = request.POST["filename"]
 
-            # f= open('file_chunks_%s.txt'%file_name, 'w')
+            path = default_storage.save('./media', file)
+            try:
+                # media 폴더에 저장
+                chunks = default_storage.open(path).read().decode('utf-8-sig')
+            except UnicodeDecodeError as e:
+                error_log = "다음의 인코딩 형식을 지원합니다.(utf-8) %s"%e
+                response = JsonResponse({"success":False, "error": error_log})
+                response.status_code = 403
+                return response
 
-            # for chunk in file.chunks():
-            #     f.write(str(chunk))
-            # f.close()
-
-
-            for chunk in file.chunks():
-                try:
-                    file_chunk = chunk.decode('utf-8-sig')
-                except UnicodeDecodeError as e:
-                    error_log = "다음의 인코딩 형식을 지원합니다.(utf-8) %s"%e 
-                    response = JsonResponse({"success":False, "error": error_log})
-                    response.status_code = 403
-                    return response
-
-            chunks = file_chunk.replace('\r\n', ',')
+            # media 폴더에 저장된 파일 바로삭제
+            default_storage.delete(path)
+            chunks = chunks.replace('\r\n', ',')
             chunk_list = chunks.split(',')[:-1]
             columns = chunk_list[0:3]
-
             true_columns = ["거래구분","거래유형","적요"]
 
             for i,n in enumerate(columns):
@@ -112,7 +105,7 @@ def tagging(request):
             datatable.save()
 
             df = pd.DataFrame(columns=["index","거래구분","적요","대분류","중분류"])
-            
+
             nk = Nickonlpy()
             nwt = NicWordTagging()
             trans_md = False
@@ -142,8 +135,8 @@ def tagging(request):
                     text = find_null(text)
                     text = nk.predict_tokennize(text)
                     protable.pro_text = text
-                    
-                    #######################################                
+
+                    #######################################
                     if (trans_md) and (text not in ["", " ", "  "]):
                         # tagging
                         result = nwt.text_tagging(text, trans_md)
@@ -178,8 +171,10 @@ def tagging(request):
             datatable.save()
 
             return JsonResponse({"message":"데이터 처리가 완료되었습니다. 파일을 다운로드하세요.", "filename":new_file_name}, status=200)
+
+
     else:
-            return JsonResponse({"message":"please login!"}, status=200)
+        return JsonResponse({"message":"please login!"}, status=200)
         
 @csrf_exempt
 def complete_download(request):

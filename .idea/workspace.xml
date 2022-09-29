@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="6d4fa605-5846-4436-b26a-0f3af07c1104" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/tagging/forms.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tagging/util.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ats_module" beforeDir="false" afterPath="$PROJECT_DIR$/ats_module" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ats_module/TextTagging.py" beforeDir="false" afterPath="$PROJECT_DIR$/ats_module/TextTagging.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ats_module/info/적요_카테고리_정리_v0.65.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ats_module/models/L3/일단계분류/de_v0.65.h5" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ats_module/models/L3/일단계분류/ex_v0.65.h5" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ats_module/models/input_length_v0.65.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ats_module/models/tokenizer/tokenizer_v0.65.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ats_module/models/tokenizer/tokenizer_word_v0.65.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/p/js/jquery.event.drag-1.7.1.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/p/js/jquery.event.drag-1.7.1.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tagging/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/tagging/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tagging/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/tagging/views.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2FNonb8PnGWTLkba7XfkZIxoWK6" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "last_opened_file_path": "C:/Users/choi seung un/niccompany/2022년_상품개발/code/git/ats_module"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="6d4fa605-5846-4436-b26a-0f3af07c1104" name="Changes" comment="" />
+      <created>1664342071663</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1664342071663</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
