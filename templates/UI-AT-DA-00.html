@@ -81,9 +81,9 @@
 			<ul>
 				<li>
 					<!-- <a href='data:application/csv;charset=utf-8,ABc,DEF,GHI,JKL' download="{{i.file_name}}">{{i.file_name}}</a> -->
-					<form id="history" method="POST" action="{% url 'complete_download' %}" enctype="multipart/form-data">
+					<form id="history" method="POST" action="{% url 'history_download' %}" enctype="multipart/form-data">
 						{% csrf_token %}
-						<input type="submit" name="download_file" id="download_file" value="{{i.new_file_name}}"/>
+						<input type="submit" name="history_file_name" id="history_file_name" value="{{i.new_file_name}}"/>
 					</form>
 				</li>
 				<li>{{i.pro_dtime}}</li>

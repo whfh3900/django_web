@@ -36,7 +36,6 @@ def ats_login(request):
         global context
 
         try:
-
             if user is not None:    
                 login(request, user)
                 data_list = DataTable.objects.filter(member_id=userID).values('new_file_name','pro_dtime','data_len','pro_result')
@@ -67,6 +66,13 @@ def tagging(request):
             userID = context["userID"]
             file_name = request.POST["filename"]
 
+            f= open('file_chunks_%s.txt'%file_name, 'w')
+
+            for chunk in file.chunks():
+                f.write(str(chunk))
+            f.close()
+
+
             for chunk in file.chunks():
                 try:
                     file_chunk = chunk.decode('utf-8-sig')
@@ -76,7 +82,6 @@ def tagging(request):
                     response.status_code = 403
                     return response
 
-            
             chunks = file_chunk.replace('\r\n', ',')
             chunk_list = chunks.split(',')[:-1]
             columns = chunk_list[0:3]
@@ -93,7 +98,6 @@ def tagging(request):
             chunk_list = chunk_list[3:]
             data_len = int(round(len(chunk_list)/3, 0))
 
-            
             if data_len > 1000000:
                 error_log = "1000000건 이내만 처리 가능합니다. 파일을 다시 업로드 하세요."
                 response = JsonResponse({"success":False, "error": error_log})
@@ -117,7 +121,6 @@ def tagging(request):
                         df.at[int(i/3), "거래구분"] = n
 
                 if i%3 == 2:
-                
                     protable = ProTable()
                     protable.member_id = userID
                     protable.file_name = file_name
