@@ -35,25 +35,20 @@ def ats_login(request):
         user = authenticate(request, username=userID, password=password)
         global context
 
-        try:
-            if user is not None:    
-                login(request, user)
-                data_list = DataTable.objects.filter(member_id=userID).values('new_file_name','pro_dtime','data_len','pro_result')
-                name = list(AuthUser.objects.filter(username=userID).values('first_name','last_name'))[0]
-                name = name['first_name']+name['last_name']
-                context = {'data_list':data_list, 'userID':userID, 'name':name, 'data_len':len(data_list)}
-                # Redirect to a success page.
-                return render(request, 'UI-AT-DA-00.html', context)
+        if user is not None:    
+            login(request, user)
+            data_list = DataTable.objects.filter(member_id=userID).values('new_file_name','pro_dtime','data_len','pro_result')
+            name = list(AuthUser.objects.filter(username=userID).values('first_name','last_name'))[0]
+            name = name['first_name']+name['last_name']
+            context = {'data_list':data_list, 'userID':userID, 'name':name, 'data_len':len(data_list)}
+            # Redirect to a success page.
+            return render(request, 'UI-AT-DA-00.html', context)
 
-            else:
-                # Return an 'invalid login' error message.
-                context['error'] = 'Not found ID or PW!'
-                return render(request, "UI-AT-JO-00.html", context)
-
-        except Exception as e:
-            context['error'] = 'Please write ID or PW!'
+        else:
+            # Return an 'invalid login' error message.
+            context['error'] = 'Not found ID or PW!'
             return render(request, "UI-AT-JO-00.html", context)
-            
+
 
 @csrf_exempt
 def tagging(request):
@@ -66,11 +61,11 @@ def tagging(request):
             userID = context["userID"]
             file_name = request.POST["filename"]
 
-            f= open('file_chunks_%s.txt'%file_name, 'w')
+            # f= open('file_chunks_%s.txt'%file_name, 'w')
 
-            for chunk in file.chunks():
-                f.write(str(chunk))
-            f.close()
+            # for chunk in file.chunks():
+            #     f.write(str(chunk))
+            # f.close()
 
 
             for chunk in file.chunks():
@@ -106,12 +101,21 @@ def tagging(request):
 
             new_file_name = file_name.split('.')[0]+'_'+datetime.datetime.now().strftime("%Y%m%d%H%M%S")+'.csv'
 
+            # 태깅전 data table 입력
+            datatable = DataTable()
+            datatable.member_id = userID
+            datatable.file_name = file_name
+            datatable.new_file_name = new_file_name
+            datatable.pro_dtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            datatable.data_len = str(data_len)+'건'
+            datatable.pro_result = '진행중'
+            datatable.save()
+
             df = pd.DataFrame(columns=["index","거래구분","적요","대분류","중분류"])
             
             nk = Nickonlpy()
             nwt = NicWordTagging()
             trans_md = False
-            stat = '정상'
 
             for i,n in enumerate(chunk_list):
                 df.at[int(i/3), "index"] = int(i/3)
@@ -139,12 +143,10 @@ def tagging(request):
                     text = nk.predict_tokennize(text)
                     protable.pro_text = text
                     
-                    
                     #######################################                
                     if (trans_md) and (text not in ["", " ", "  "]):
                         # tagging
                         result = nwt.text_tagging(text, trans_md)
-
                         protable.first_tag = result[0]
                         protable.second_tag = result[1]
                         df.at[int(i/3), "대분류"] = result[0]
@@ -152,7 +154,6 @@ def tagging(request):
                         trans_md = False
 
                     elif (trans_md) and (text in ["", " ", "  "]):
-                        stat = '공백'
                         protable.first_tag = "공백"
                         protable.second_tag = "공백"
                         df.at[int(i/3), "대분류"] = ""
@@ -160,29 +161,20 @@ def tagging(request):
                         protable.note = "200"
 
                     else:
-                        stat = '에러'
                         protable.first_tag = ""
                         protable.second_tag = ""
                         df.at[int(i/3), "대분류"] = ""
                         df.at[int(i/3), "중분류"] = ""
                         protable.note = "333"
 
-
                     protable.event_dtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                     protable.note = "000"
-
-
                     protable.save()
 
             df.to_csv('./save/%s'%new_file_name, encoding="utf-8-sig", index=False)
 
-            datatable = DataTable()
-            datatable.member_id = userID
-            datatable.file_name = file_name
-            datatable.new_file_name = new_file_name
-            datatable.pro_dtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            datatable.data_len = str(data_len)+'건'
-            datatable.pro_result = stat
+            # 태깅후 data table 입력
+            datatable.pro_result = '완료'
             datatable.save()
 
             return JsonResponse({"message":"데이터 처리가 완료되었습니다. 파일을 다운로드하세요.", "filename":new_file_name}, status=200)
@@ -196,7 +188,7 @@ def complete_download(request):
 
     elif request.method == "POST":
         new_file_name = request.POST["new_file_name"]
-        file_path = os.path.dirname('./save/%s'%new_file_name) 
+        file_path = os.path.dirname('./save/%s'%new_file_name)
         file_name = os.path.basename('./save/%s'%new_file_name)
 
         fs = FileSystemStorage(file_path)
@@ -204,6 +196,7 @@ def complete_download(request):
                                 content_type='application/vnd.ms-excel')
         response['Content-Disposition'] = 'attachment; filename="{}"'.format(new_file_name)
         return response
+
 
 @csrf_exempt
 def history_download(request):

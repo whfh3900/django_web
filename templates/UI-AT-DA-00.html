@@ -80,10 +80,14 @@
 			{% for i in data_list %}
 			<ul>
 				<li>
-					<!-- <a href='data:application/csv;charset=utf-8,ABc,DEF,GHI,JKL' download="{{i.file_name}}">{{i.file_name}}</a> -->
 					<form id="history" method="POST" action="{% url 'history_download' %}" enctype="multipart/form-data">
 						{% csrf_token %}
-						<input type="submit" name="history_file_name" id="history_file_name" value="{{i.new_file_name}}"/>
+						{% if i.pro_result == '진행중' %}
+							<input type="submit" class= "ing" name="history_file_name" id="history_file_name" value="{{i.new_file_name}}" disabled/>
+						{% else %}
+							<input type="submit" name="history_file_name" id="history_file_name" value="{{i.new_file_name}}"/>
+						{% endif %}
+
 					</form>
 				</li>
 				<li>{{i.pro_dtime}}</li>
@@ -97,6 +101,7 @@
 	
 	<!-- 태깅중  -->
 	<div class="tagging">
+		<button type="button" class="btn_Close" onclick="popClose2()"></button>
 		<p></p>
 		<span>카테고리 태깅중 입니다.
 		태깅이 완료될 때 까지 현재 창을 유지해 주세요.</span>

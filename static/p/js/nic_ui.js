@@ -10,12 +10,17 @@ function popClose() {
 	$(".modal").fadeOut();
 };
 
+
 /* 태깅중 팝업 */
 function popOpen2() {
 	$(".tagging").fadeIn();
 	$(".modal").fadeIn();
 };
 
+function popClose2() {
+	$(".tagging").fadeOut();
+	$(".modal").fadeOut();
+};
 
 /* 공통 얼럿 */
 function popOpen3() {
