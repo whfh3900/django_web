@@ -7,7 +7,9 @@
       <change beforePath="$PROJECT_DIR$/ats_module/TextPreprocessing.py" beforeDir="false" afterPath="$PROJECT_DIR$/ats_module/TextPreprocessing.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ats_module/TextTagging.py" beforeDir="false" afterPath="$PROJECT_DIR$/ats_module/TextTagging.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ats_module/models/input_length_v0.73.json" beforeDir="false" afterPath="$PROJECT_DIR$/ats_module/models/input_length_v0.73.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tagging/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/tagging/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tagging/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/tagging/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/UI-AT-DA-00.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/UI-AT-DA-00.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

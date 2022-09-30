@@ -16,6 +16,7 @@ from django.core.files.storage import FileSystemStorage, default_storage
 from ats_module.TextPreprocessing import *
 from ats_module.TextTagging import *
 import datetime
+from tqdm import tqdm
 
 
 @csrf_exempt
@@ -36,7 +37,7 @@ def ats_login(request):
 
         if user is not None:    
             login(request, user)
-            data_list = DataTable.objects.filter(member_id=userID).values('new_file_name','pro_dtime','data_len','pro_result')
+            data_list = DataTable.objects.filter(member_id=userID).values('new_file_name','start_dtime','end_dtime','data_len','pro_result')
             name = list(AuthUser.objects.filter(username=userID).values('first_name','last_name'))[0]
             name = name['first_name']+name['last_name']
             context = {'data_list':data_list, 'userID':userID, 'name':name, 'data_len':len(data_list)}
@@ -106,7 +107,7 @@ def tagging(request):
             datatable.member_id = userID
             datatable.file_name = file_name
             datatable.new_file_name = new_file_name
-            datatable.pro_dtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            datatable.start_dtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             datatable.data_len = str(data_len)+'건'
             datatable.pro_result = '진행중'
             datatable.save()
@@ -187,6 +188,7 @@ def tagging(request):
             df.to_csv('./save/%s'%new_file_name, encoding="utf-8-sig", index=False)
 
             # 태깅후 data table 입력
+            datatable.end_dtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             datatable.pro_result = '완료'
             datatable.save()
 
