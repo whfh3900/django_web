@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
 from .models import DataTable, AuthUser, ProTable
 from django.http import JsonResponse, FileResponse
-from django.core.files.storage import default_storage
+from django.core.files.storage import FileSystemStorage, default_storage
 # from django.contrib import messages
 
 # import pandas as pd
@@ -118,7 +118,7 @@ def tagging(request):
             trans_md = False
             ats_kdcd_dtl = False
 
-            for i,n in enumerate(chunk_list):
+            for i,n in enumerate(tqdm(chunk_list)):
                 df.at[int(i/3), "index"] = int(i/3)
                 if i%3 == 0:
                     df.at[int(i / 3), "거래구분"] = n
@@ -142,10 +142,12 @@ def tagging(request):
                     # preprocessing
                     text = find_null(n)
                     text = ascii_check(text)
+                    text = change_upper(text)
+                    text = space_delete(text)
+                    text = remove_bank(text)
                     text = corporatebody(text)
+                    text = numbers_to_zero(text)
                     text = remove_specialchar(text)
-                    text = numbers_check(text)
-                    text = find_null(text)
                     text = nk.predict_tokennize(text)
 
                     # 정상일때 #######################################
