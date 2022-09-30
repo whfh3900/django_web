@@ -1,15 +1,17 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
-from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from .models import DataTable, AuthUser, ProTable
 from django.http import JsonResponse, FileResponse
 from django.core.files.storage import default_storage
+# from django.contrib import messages
 
-import pandas as pd
-#import logging
-#from tabulate import tabulate
-import time
+# import pandas as pd
+# import logging
+# from tabulate import tabulate
+# import time
+
+
 # Create your views here.
 from ats_module.TextPreprocessing import *
 from ats_module.TextTagging import *
@@ -54,7 +56,6 @@ def tagging(request):
             return render(request, 'UI-AT-DA-00.html')
 
         elif request.method == "POST":
-            # file = request.FILES.get("testFile")
             file = request.FILES["testFile"]
             userID = context["userID"]
             file_name = request.POST["filename"]
@@ -76,21 +77,27 @@ def tagging(request):
             columns = chunk_list[0:3]
             true_columns = ["거래구분","거래유형","적요"]
 
+
+            # 데이터 컬럼형식 검사 ###########################################
             for i,n in enumerate(columns):
-                if n not in true_columns:
-                    error_log = "%s 컬럼이 없습니다. 데이터 형식을 확인하세요.(필수컬럼: %s) Error columns : %s"%(true_columns[i], str(true_columns), n)
-                    response = JsonResponse({"success":False, "error": error_log})
+                if n != true_columns[i]:
+                    error_log = "%s 컬럼이 없습니다. 데이터 형식을 확인하세요.(컬럼순서: %s) Error columns : %s" % (
+                    true_columns[i], str(true_columns), n)
+                    response = JsonResponse({"success": False, "error": error_log})
                     response.status_code = 403
                     return response
+            ###############################################################
 
+
+            # 데이터 길이 검사 ##############################################
             chunk_list = chunk_list[3:]
             data_len = int(round(len(chunk_list)/3, 0))
-
             if data_len > 1000000:
                 error_log = "1000000건 이내만 처리 가능합니다. 파일을 다시 업로드 하세요."
                 response = JsonResponse({"success":False, "error": error_log})
                 response.status_code = 403
                 return response
+            ###############################################################
 
             new_file_name = file_name.split('.')[0]+'_'+datetime.datetime.now().strftime("%Y%m%d%H%M%S")+'.csv'
 
@@ -104,18 +111,23 @@ def tagging(request):
             datatable.pro_result = '진행중'
             datatable.save()
 
-            df = pd.DataFrame(columns=["index","거래구분","적요","대분류","중분류"])
+            df = pd.DataFrame(columns=["index","거래구분","거래유형","적요","대분류","중분류"])
 
             nk = Nickonlpy()
             nwt = NicWordTagging()
             trans_md = False
+            ats_kdcd_dtl = False
 
             for i,n in enumerate(chunk_list):
                 df.at[int(i/3), "index"] = int(i/3)
                 if i%3 == 0:
+                    df.at[int(i / 3), "거래구분"] = n
                     if n in ['1', '2']:
                         trans_md = n
-                        df.at[int(i/3), "거래구분"] = n
+
+                if i%3 == 1:
+                    df.at[int(i / 3), "거래유형"] = n
+                    ats_kdcd_dtl = n
 
                 if i%3 == 2:
                     protable = ProTable()
@@ -123,6 +135,7 @@ def tagging(request):
                     protable.file_name = file_name
                     protable.new_file_name = new_file_name
                     protable.trans_md = trans_md
+                    protable.ats_kdcd_dtl = ats_kdcd_dtl
                     protable.ori_text = n
                     df.at[int(i/3), "적요"] = n
 
@@ -134,26 +147,31 @@ def tagging(request):
                     text = numbers_check(text)
                     text = find_null(text)
                     text = nk.predict_tokennize(text)
-                    protable.pro_text = text
 
-                    #######################################
+                    # 정상일때 #######################################
                     if (trans_md) and (text not in ["", " ", "  "]):
                         # tagging
                         result = nwt.text_tagging(text, trans_md)
+                        text = nk.name_check(text)
+                        protable.pro_text = text
                         protable.first_tag = result[0]
                         protable.second_tag = result[1]
                         df.at[int(i/3), "대분류"] = result[0]
                         df.at[int(i/3), "중분류"] = result[1]
                         trans_md = False
 
+                    # 적요가 공백일때 #################################
                     elif (trans_md) and (text in ["", " ", "  "]):
+                        protable.pro_text = text
                         protable.first_tag = "공백"
                         protable.second_tag = "공백"
                         df.at[int(i/3), "대분류"] = ""
                         df.at[int(i/3), "중분류"] = ""
                         protable.note = "200"
 
+                    # 거래구분이 이상할 때 ############################
                     else:
+                        protable.pro_text = text
                         protable.first_tag = ""
                         protable.second_tag = ""
                         df.at[int(i/3), "대분류"] = ""
@@ -171,8 +189,6 @@ def tagging(request):
             datatable.save()
 
             return JsonResponse({"message":"데이터 처리가 완료되었습니다. 파일을 다운로드하세요.", "filename":new_file_name}, status=200)
-
-
     else:
         return JsonResponse({"message":"please login!"}, status=200)
         

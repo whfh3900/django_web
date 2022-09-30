@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="6d4fa605-5846-4436-b26a-0f3af07c1104" name="Changes" comment="2022-09-29: media에 저장되도록">
+    <list default="true" id="6d4fa605-5846-4436-b26a-0f3af07c1104" name="Changes" comment="2022-09-29: numbers_to_zero 수정">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ats_module/TextPreprocessing.py" beforeDir="false" afterPath="$PROJECT_DIR$/ats_module/TextPreprocessing.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ats_module/TextTagging.py" beforeDir="false" afterPath="$PROJECT_DIR$/ats_module/TextTagging.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ats_module/models/input_length_v0.73.json" beforeDir="false" afterPath="$PROJECT_DIR$/ats_module/models/input_length_v0.73.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/p/js/jquery.event.drag-1.7.1.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/p/js/jquery.event.drag-1.7.1.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tagging/forms.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tagging/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/tagging/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tagging/util.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tagging/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/tagging/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,7 +26,7 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/ats_module" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -54,7 +61,14 @@
       <option name="project" value="LOCAL" />
       <updated>1664442751258</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="2022-09-29: numbers_to_zero 수정">
+      <created>1664443837791</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1664443837791</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -70,6 +84,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="2022-09-29: media에 저장되도록" />
-    <option name="LAST_COMMIT_MESSAGE" value="2022-09-29: media에 저장되도록" />
+    <MESSAGE value="2022-09-29: numbers_to_zero 수정" />
+    <option name="LAST_COMMIT_MESSAGE" value="2022-09-29: numbers_to_zero 수정" />
   </component>
 </project>

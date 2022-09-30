@@ -6,7 +6,6 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
-from .util import date_upload_to
 
 class AuthGroup(models.Model):
     name = models.CharField(unique=True, max_length=150)
@@ -150,6 +149,7 @@ class ProTable(models.Model):
     file_name = models.TextField()
     new_file_name = models.TextField()
     trans_md = models.CharField(max_length=3)
+    ats_kdcd_dtl = models.TextField()
     ori_text = models.TextField()
     pro_text = models.TextField()
     first_tag = models.CharField(max_length=10, blank=True, null=True)
