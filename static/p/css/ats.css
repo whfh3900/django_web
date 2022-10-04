@@ -44,8 +44,8 @@ a, button, :focus, a:focus, button:focus, a:active, a:hover {outline:0}
 		.history_open:hover {border-bottom: 2px dashed #2a2a2a; text-decoration: none; }
 		.logout {position: absolute; top:29px; right:0px; display:inline-block; width:auto; padding:2px 0; font-size:14px; font-weight:700; letter-spacing: -1px; border-bottom: 2px solid #2a2a2a; margin-right:100px;}
 		.logout:hover {border-bottom: 2px dashed #2a2a2a; text-decoration: none; cursor: pointer;}
-		.h_disable {background-color:#e0e0e0; border-radius: 3px; color:#bbb;}
-		.h_disable:hover {background-color:#e0e0e0; border-radius: 3px; color:#bbb; cursor: default}
+		.h_disable {color:#ddd; border-bottom: 2px solid #ccc;}
+		.h_disable:hover {cursor: default; border-bottom: 2px solid #ccc;}
 		.btn_X {position:absolute; right:12px; top:30px; z-index:20; width:60px; height:22px; background:url('../../images/p_menu_x.png') no-repeat center; background-size: 22px;}
 
 /* popup */

@@ -46,7 +46,7 @@ def ats_login(request):
 
         else:
             # Return an 'invalid login' error message.
-            context['error'] = 'Not found ID or PW!'
+            context['error'] = 'ID/PW를 다시 한번 확인해주세요.'
             return render(request, "UI-AT-JO-00.html", context)
 
 
