@@ -125,6 +125,8 @@ def tagging(request):
                     df.at[int(i / 3), "거래구분"] = n
                     if n in ['1', '2']:
                         trans_md = n
+                    else:
+                        trans_md = 'e'
 
                 if i%3 == 1:
                     df.at[int(i / 3), "거래유형"] = n
@@ -152,7 +154,7 @@ def tagging(request):
                     text = nk.predict_tokennize(text)
 
                     # 정상일때 #######################################
-                    if (trans_md) and (text not in ["", " ", "  "]):
+                    if (trans_md != 'e') and (text not in ["", " ", "  "]):
                         # tagging
                         result = nwt.text_tagging(text, trans_md)
                         text = nk.name_check(text)
@@ -162,9 +164,10 @@ def tagging(request):
                         df.at[int(i/3), "대분류"] = result[0]
                         df.at[int(i/3), "중분류"] = result[1]
                         trans_md = False
+                        protable.note = "000"
 
                     # 적요가 공백일때 #################################
-                    elif (trans_md) and (text in ["", " ", "  "]):
+                    elif (trans_md != 'e') and (text in ["", " ", "  "]):
                         protable.pro_text = text
                         protable.first_tag = "공백"
                         protable.second_tag = "공백"
@@ -173,7 +176,7 @@ def tagging(request):
                         protable.note = "200"
 
                     # 거래구분이 이상할 때 ############################
-                    else:
+                    elif trans_md == 'e':
                         protable.pro_text = text
                         protable.first_tag = ""
                         protable.second_tag = ""
@@ -182,8 +185,8 @@ def tagging(request):
                         protable.note = "333"
 
                     protable.event_dtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                    protable.note = "000"
                     protable.save()
+
 
             df.to_csv('./save/%s'%new_file_name, encoding="utf-8-sig", index=False)
 
