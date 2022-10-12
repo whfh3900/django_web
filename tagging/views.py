@@ -9,7 +9,7 @@ from django.core.files.storage import FileSystemStorage, default_storage
 # import pandas as pd
 # import logging
 # from tabulate import tabulate
-# import time
+import time
 
 
 # Create your views here.
@@ -66,6 +66,7 @@ def tagging(request):
                 # media 폴더에 저장
                 chunks = default_storage.open(path).read().decode('utf-8-sig')
             except UnicodeDecodeError as e:
+                # time.sleep(0.5)
                 error_log = "다음의 인코딩 형식을 지원합니다.(utf-8) %s"%e
                 response = JsonResponse({"success":False, "error": error_log})
                 response.status_code = 403
@@ -82,7 +83,8 @@ def tagging(request):
             # 데이터 컬럼형식 검사 ###########################################
             for i,n in enumerate(columns):
                 if n != true_columns[i]:
-                    error_log = "%s 컬럼이 없습니다. 데이터 형식을 확인하세요.(컬럼순서: %s) Error columns : %s" % (
+                    # time.sleep(0.5)
+                    error_log = "<li>%s 컬럼이 없습니다. 데이터 형식을 확인하세요.</li><li>(컬럼순서: %s) </li><li>에러컬럼 : %s</li>" % (
                     true_columns[i], str(true_columns), n)
                     response = JsonResponse({"success": False, "error": error_log})
                     response.status_code = 403
@@ -94,6 +96,7 @@ def tagging(request):
             chunk_list = chunk_list[3:]
             data_len = int(round(len(chunk_list)/3, 0))
             if data_len > 1000000:
+                # time.sleep(0.5)
                 error_log = "1000000건 이내만 처리 가능합니다. 파일을 다시 업로드 하세요."
                 response = JsonResponse({"success":False, "error": error_log})
                 response.status_code = 403

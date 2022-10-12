@@ -5,9 +5,8 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ats_module" beforeDir="false" afterPath="$PROJECT_DIR$/ats_module" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ats_module/TextTagging.py" beforeDir="false" afterPath="$PROJECT_DIR$/ats_module/TextTagging.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/p/js/jquery.event.drag-1.7.1.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/p/js/jquery.event.drag-1.7.1.min.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tagging/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/tagging/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/UI-MA-00-00.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/UI-MA-00-00.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,7 +38,7 @@
     &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/choi seung un/niccompany/2022년_상품개발/code/git/django_web&quot;
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/choi seung un/niccompany/2022년_상품개발/code/git/ats_module&quot;
   }
 }</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -67,6 +66,9 @@
     </task>
     <option name="localTasksCounter" value="3" />
     <servers />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="requirements.txt" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
