@@ -245,8 +245,8 @@ def introduction_download(request):
     elif request.method == "POST":
         
         file_path = os.path.dirname('./file/') 
-        file_name = os.path.basename('소개서.pdf')
+        file_name = os.path.basename('file.pdf')
         fs = FileSystemStorage(file_path)
         response = FileResponse(fs.open(file_name, 'rb'))
-        response['Content-Disposition'] = 'attachment; filename="{}"'.format('소개서.pdf')
+        response['Content-Disposition'] = 'attachment; filename="{}"'.format('file.pdf')
         return response

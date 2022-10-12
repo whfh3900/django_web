@@ -14,6 +14,19 @@ from pathlib import Path
 import os
 import my_settings
 import pymysql
+
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
+sentry_sdk.init(
+    dsn = "https://9921d0e6981c49c8bcdc201f02f5f478@o4503969364770816.ingest.sentry.io/4503969369227266",
+    integrations=[DjangoIntegration()],
+    traces_sample_rate=1.0,
+
+    # If you wish to associate users to errors (assuming you are using
+    # django.contrib.auth) you may enable sending PII data.
+    send_default_pii=True
+)
 pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -35,6 +48,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+
     'tagging.apps.TaggingConfig',
     'django.contrib.admin',
     'django.contrib.auth',
