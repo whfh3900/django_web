@@ -46,8 +46,7 @@ def ats_login(request):
 
         else:
             # Return an 'invalid login' error message.
-            context['error'] = 'ID/PW를 다시 한번 확인해주세요.'
-            return render(request, "UI-AT-JO-00.html", context)
+            return render(request, "UI-AT-JO-01.html")
 
 
 @csrf_exempt
@@ -243,10 +242,7 @@ def introduction_download(request):
         return render(request, 'UI-MA-00-00.html')
 
     elif request.method == "POST":
-        
-        file_path = os.path.dirname('./file/') 
-        file_name = os.path.basename('file.pdf')
-        fs = FileSystemStorage(file_path)
-        response = FileResponse(fs.open(file_name, 'rb'))
-        response['Content-Disposition'] = 'attachment; filename="{}"'.format('file.pdf')
+        fs = FileSystemStorage(os.path.dirname('./'))
+        response = FileResponse(fs.open('file.pdf', 'rb'))
+        response['Content-Disposition'] = 'attachment; filename="{}"'.format('다운로드.pdf')
         return response
