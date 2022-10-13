@@ -60,7 +60,8 @@ def tagging(request):
             userID = context["userID"]
             file_name = request.POST["filename"]
 
-            path = default_storage.save('./media', file)
+            #path = default_storage.save('./media', file)
+            path = default_storage.save(file.name, file)
             try:
                 # media 폴더에 저장
                 chunks = default_storage.open(path).read().decode('utf-8-sig')
@@ -72,7 +73,7 @@ def tagging(request):
                 return response
 
             # media 폴더에 저장된 파일 바로삭제
-            default_storage.delete(path)
+#            default_storage.delete(path)
             chunks = chunks.replace('\r\n', ',')
             chunk_list = chunks.split(',')[:-1]
             columns = chunk_list[0:3]
@@ -190,7 +191,7 @@ def tagging(request):
                     protable.save()
 
 
-            df.to_csv('./save/%s'%new_file_name, encoding="utf-8-sig", index=False)
+            df.to_csv('/home/manager/django_web/save/%s'%new_file_name, encoding="utf-8-sig", index=False)
 
             # 태깅후 data table 입력
             datatable.end_dtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -208,8 +209,8 @@ def complete_download(request):
 
     elif request.method == "POST":
         new_file_name = request.POST["new_file_name"]
-        file_path = os.path.dirname('./save/%s'%new_file_name)
-        file_name = os.path.basename('./save/%s'%new_file_name)
+        file_path = os.path.dirname('/home/manager/django_web/save/%s'%new_file_name)
+        file_name = os.path.basename('/home/manager/django_web/save/%s'%new_file_name)
 
         fs = FileSystemStorage(file_path)
         response = FileResponse(fs.open(file_name, 'rb'),
@@ -225,10 +226,8 @@ def history_download(request):
 
     elif request.method == "POST":
         history_file_name = request.POST["history_file_name"]
-        file_path = os.path.dirname('./save/%s'%history_file_name) 
-        file_name = os.path.basename('./save/%s'%history_file_name)
-
-        
+        file_path = os.path.dirname('/home/manager/django_web/save/%s'%history_file_name) 
+        file_name = os.path.basename('/home/manager/django_web/save/%s'%history_file_name)
         fs = FileSystemStorage(file_path)
         response = FileResponse(fs.open(file_name, 'rb'),
                                 content_type='application/vnd.ms-excel')
@@ -242,7 +241,9 @@ def introduction_download(request):
         return render(request, 'UI-MA-00-00.html')
 
     elif request.method == "POST":
-        fs = FileSystemStorage(os.path.dirname('./'))
-        response = FileResponse(fs.open('file.pdf', 'rb'))
+        file_path = os.path.dirname('/home/manager/django_web/file.pdf') 
+        file_name = os.path.basename('/home/manager/django_web/file.pdf')
+        fs = FileSystemStorage(file_path)
+        response = FileResponse(fs.open(file_name, 'rb'))
         response['Content-Disposition'] = 'attachment; filename="{}"'.format('다운로드.pdf')
         return response
