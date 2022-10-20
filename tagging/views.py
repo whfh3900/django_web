@@ -74,7 +74,7 @@ def tagging(request):
                 return response
 
             # media 폴더에 저장된 파일 바로삭제
-            #            default_storage.delete(path)
+            default_storage.delete(path)
             chunks = chunks.replace('\r\n', ',')
             chunk_list = chunks.split(',')[:-1]
             columns = chunk_list[0:3]
