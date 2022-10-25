@@ -1,18 +1,15 @@
+# Create your views here.
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
-from .models import DataTable, AuthUser, ProTable
+from .models import DataTable, AuthUser
 from django.http import JsonResponse, FileResponse
 from django.core.files.storage import FileSystemStorage, default_storage
 # from django.contrib import messages
 
-
-# Create your views here.
-from ats_module.TextPreprocessing import *
-from ats_module.TextTagging import *
+import os
 import datetime
-from tqdm import tqdm
-
+import platform
 
 @csrf_exempt
 def home(request):
@@ -57,6 +54,7 @@ def tagging(request):
             userID = context["userID"]
             file_name = request.POST["filename"]
             path = default_storage.save(file.name, file)
+
             try:
                 # media 폴더에 저장
                 chunks = default_storage.open(path).read().decode('utf-8-sig')
@@ -94,6 +92,11 @@ def tagging(request):
                 response = JsonResponse({"success": False, "error": error_log})
                 response.status_code = 403
                 return response
+            elif data_len < 4:
+                error_log = "4건 이상만 처리 가능합니다. 파일을 다시 업로드 하세요."
+                response = JsonResponse({"success": False, "error": error_log})
+                response.status_code = 403
+                return response
             ###############################################################
 
             new_file_name = file_name.split('.')[0] + '_' + datetime.datetime.now().strftime("%Y%m%d%H%M%S") + '.csv'
@@ -108,28 +111,27 @@ def tagging(request):
             datatable.pro_result = '진행중'
             datatable.save()
 
+
             # 이전버젼 ##############################################
-            # df = pd.DataFrame(columns=["index", "거래구분", "거래유형", "적요", "대분류", "중분류"])
-            #
+            # df = pd.DataFrame(columns=["index", "거래구분", "거래유형", "적요", "대분류", "중분류", "비고"])
             # nk = Nickonlpy()
             # nwt = NicWordTagging()
             # trans_md = False
             # ats_kdcd_dtl = False
-            #
-            # for i, n in enumerate(tqdm(chunk_list)):
-            #     df.at[int(i / 3), "index"] = int(i / 3)
-            #     if i % 3 == 0:
+            # for i,n in enumerate(tqdm(chunk_list)):
+            #     df.at[int(i/3), "index"] = int(i/3)
+            #     if i%3 == 0:
             #         df.at[int(i / 3), "거래구분"] = n
             #         if n in ['1', '2']:
             #             trans_md = n
             #         else:
             #             trans_md = 'e'
             #
-            #     if i % 3 == 1:
+            #     if i%3 == 1:
             #         df.at[int(i / 3), "거래유형"] = n
             #         ats_kdcd_dtl = n
             #
-            #     if i % 3 == 2:
+            #     if i%3 == 2:
             #         protable = ProTable()
             #         protable.member_id = userID
             #         protable.file_name = file_name
@@ -137,7 +139,7 @@ def tagging(request):
             #         protable.trans_md = trans_md
             #         protable.ats_kdcd_dtl = ats_kdcd_dtl
             #         protable.ori_text = n
-            #         df.at[int(i / 3), "적요"] = n
+            #         df.at[int(i/3), "적요"] = n
             #
             #         # preprocessing
             #         text = find_null(n)
@@ -158,8 +160,8 @@ def tagging(request):
             #             protable.pro_text = text
             #             protable.first_tag = result[0]
             #             protable.second_tag = result[1]
-            #             df.at[int(i / 3), "대분류"] = result[0]
-            #             df.at[int(i / 3), "중분류"] = result[1]
+            #             df.at[int(i/3), "대분류"] = result[0]
+            #             df.at[int(i/3), "중분류"] = result[1]
             #             trans_md = False
             #             protable.note = "000"
             #
@@ -168,8 +170,8 @@ def tagging(request):
             #             protable.pro_text = text
             #             protable.first_tag = "공백"
             #             protable.second_tag = "공백"
-            #             df.at[int(i / 3), "대분류"] = ""
-            #             df.at[int(i / 3), "중분류"] = ""
+            #             df.at[int(i/3), "대분류"] = ""
+            #             df.at[int(i/3), "중분류"] = ""
             #             protable.note = "200"
             #
             #         # 거래구분이 이상할 때 ############################
@@ -177,27 +179,31 @@ def tagging(request):
             #             protable.pro_text = text
             #             protable.first_tag = ""
             #             protable.second_tag = ""
-            #             df.at[int(i / 3), "대분류"] = ""
-            #             df.at[int(i / 3), "중분류"] = ""
+            #             df.at[int(i/3), "대분류"] = ""
+            #             df.at[int(i/3), "중분류"] = ""
             #             protable.note = "333"
             #
             #         protable.event_dtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             #         protable.save()
-            #
-            # df.to_csv('/home/manager/django_web/save/%s' % new_file_name, encoding="utf-8-sig", index=False)
+            # df.to_csv('./save/%s' % new_file_name, encoding="utf-8-sig", index=False)
             ###############################################################
+
 
             # 현재버젼 ##############################################
+
+            if platform.system() == 'Windows':
+                media_path = './media/%s' % file_name
+            elif platform.system() == 'Linux':
+                media_path = '/home/manager/django_web/media/%s' % file_name
+
             try:
                 os.system('python work_func.py %s %s %s' % (userID, file_name, new_file_name))
-                if os.path.exists('/home/manager/django_web/media/%s' % file_name):
-                    os.remove('/home/manager/django_web/media/%s' % file_name)
             except Exception as e:
                 print(e)
-                if os.path.exists('/home/manager/django_web/media/%s' % file_name):
-                    os.remove('/home/manager/django_web/media/%s' % file_name)
-            ###############################################################
 
+            if os.path.exists(media_path):
+                os.remove(media_path)
+            ###############################################################
 
             # 태깅후 data table 입력
             datatable.end_dtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -216,8 +222,13 @@ def complete_download(request):
 
     elif request.method == "POST":
         new_file_name = request.POST["new_file_name"]
-        file_path = os.path.dirname('/home/manager/django_web/save/%s' % new_file_name)
-        file_name = os.path.basename('/home/manager/django_web/save/%s' % new_file_name)
+
+        if platform.system() == 'Windows':
+            file_path = os.path.dirname('./save/%s' % new_file_name)
+            file_name = os.path.basename('./save/%s' % new_file_name)
+        elif platform.system() == 'Linux':
+            file_path = os.path.dirname('/home/manager/django_web/save/%s' % new_file_name)
+            file_name = os.path.basename('/home/manager/django_web/save/%s' % new_file_name)
 
         fs = FileSystemStorage(file_path)
         response = FileResponse(fs.open(file_name, 'rb'),
@@ -233,8 +244,14 @@ def history_download(request):
 
     elif request.method == "POST":
         history_file_name = request.POST["history_file_name"]
-        file_path = os.path.dirname('/home/manager/django_web/save/%s' % history_file_name)
-        file_name = os.path.basename('/home/manager/django_web/save/%s' % history_file_name)
+
+        if platform.system() == 'Windows':
+            file_path = os.path.dirname('./save/%s' % history_file_name)
+            file_name = os.path.basename('./save/%s' % history_file_name)
+        elif platform.system() == 'Linux':
+            file_path = os.path.dirname('/home/manager/django_web/save/%s' % history_file_name)
+            file_name = os.path.basename('/home/manager/django_web/save/%s' % history_file_name)
+
         fs = FileSystemStorage(file_path)
         response = FileResponse(fs.open(file_name, 'rb'),
                                 content_type='application/vnd.ms-excel')
@@ -248,9 +265,16 @@ def introduction_download(request):
         return render(request, 'UI-MA-00-00.html')
 
     elif request.method == "POST":
-        file_path = os.path.dirname('/home/manager/django_web/file.pdf')
-        file_name = os.path.basename('/home/manager/django_web/file.pdf')
-        fs = FileSystemStorage(file_path)
-        response = FileResponse(fs.open(file_name, 'rb'))
+        if platform.system() == 'Windows':
+            fs = FileSystemStorage(os.path.dirname('./'))
+            response = FileResponse(fs.open('file.pdf', 'rb'))
+        elif platform.system() == 'Linux':
+            file_path = os.path.dirname('/home/manager/django_web/file.pdf')
+            file_name = os.path.basename('/home/manager/django_web/file.pdf')
+            fs = FileSystemStorage(file_path)
+            response = FileResponse(fs.open(file_name, 'rb'))
+
         response['Content-Disposition'] = 'attachment; filename="{}"'.format('다운로드.pdf')
         return response
+
+

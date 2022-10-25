@@ -2,15 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6d4fa605-5846-4436-b26a-0f3af07c1104" name="Changes" comment="2022-09-29: numbers_to_zero 수정">
-      <change afterPath="$PROJECT_DIR$/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/work_func.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ats_module" beforeDir="false" afterPath="$PROJECT_DIR$/ats_module" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ats_module/TextTagging.py" beforeDir="false" afterPath="$PROJECT_DIR$/ats_module/TextTagging.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/nohup.out" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/tagging/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/tagging/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tagging/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/tagging/views_linux.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tagging/views_windows.py" beforeDir="false" afterPath="$PROJECT_DIR$/tagging/views_windows.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tagging/views_linux.py" beforeDir="false" afterPath="$PROJECT_DIR$/tagging/views_linux.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/work_func.py" beforeDir="false" afterPath="$PROJECT_DIR$/work_func.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

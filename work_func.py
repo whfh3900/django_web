@@ -6,10 +6,14 @@ import my_settings
 from tqdm import tqdm
 from ats_module.TextPreprocessing import *
 from ats_module.TextTagging import *
-from multiprocessing import Pool
 import multiprocessing
 import datetime
 import platform
+
+if platform.system() == 'Windows':
+    from multiprocessing import Pool
+elif platform.system() == 'Linux':
+    from multiprocessing.pool import ThreadPool as Pool
 
 # global value #############################
 userID = sys.argv[1]
