@@ -6,10 +6,6 @@ from django.http import JsonResponse, FileResponse
 from django.core.files.storage import FileSystemStorage, default_storage
 # from django.contrib import messages
 
-# import pandas as pd
-# import logging
-# from tabulate import tabulate
-import time
 
 # Create your views here.
 from ats_module.TextPreprocessing import *
@@ -60,8 +56,6 @@ def tagging(request):
             file = request.FILES["testFile"]
             userID = context["userID"]
             file_name = request.POST["filename"]
-
-            # path = default_storage.save('./media', file)
             path = default_storage.save(file.name, file)
             try:
                 # media 폴더에 저장
@@ -74,7 +68,7 @@ def tagging(request):
                 return response
 
             # media 폴더에 저장된 파일 바로삭제
-            default_storage.delete(path)
+            # default_storage.delete(path)
             chunks = chunks.replace('\r\n', ',')
             chunk_list = chunks.split(',')[:-1]
             columns = chunk_list[0:3]
@@ -114,82 +108,96 @@ def tagging(request):
             datatable.pro_result = '진행중'
             datatable.save()
 
-            df = pd.DataFrame(columns=["index", "거래구분", "거래유형", "적요", "대분류", "중분류"])
+            # 이전버젼 ##############################################
+            # df = pd.DataFrame(columns=["index", "거래구분", "거래유형", "적요", "대분류", "중분류"])
+            #
+            # nk = Nickonlpy()
+            # nwt = NicWordTagging()
+            # trans_md = False
+            # ats_kdcd_dtl = False
+            #
+            # for i, n in enumerate(tqdm(chunk_list)):
+            #     df.at[int(i / 3), "index"] = int(i / 3)
+            #     if i % 3 == 0:
+            #         df.at[int(i / 3), "거래구분"] = n
+            #         if n in ['1', '2']:
+            #             trans_md = n
+            #         else:
+            #             trans_md = 'e'
+            #
+            #     if i % 3 == 1:
+            #         df.at[int(i / 3), "거래유형"] = n
+            #         ats_kdcd_dtl = n
+            #
+            #     if i % 3 == 2:
+            #         protable = ProTable()
+            #         protable.member_id = userID
+            #         protable.file_name = file_name
+            #         protable.new_file_name = new_file_name
+            #         protable.trans_md = trans_md
+            #         protable.ats_kdcd_dtl = ats_kdcd_dtl
+            #         protable.ori_text = n
+            #         df.at[int(i / 3), "적요"] = n
+            #
+            #         # preprocessing
+            #         text = find_null(n)
+            #         text = ascii_check(text)
+            #         text = change_upper(text)
+            #         text = space_delete(text)
+            #         text = remove_bank(text)
+            #         text = corporatebody(text)
+            #         text = numbers_to_zero(text)
+            #         text = remove_specialchar(text)
+            #         text = nk.predict_tokennize(text)
+            #
+            #         # 정상일때 #######################################
+            #         if (trans_md != 'e') and (text not in ["", " ", "  "]):
+            #             # tagging
+            #             result = nwt.text_tagging(text, trans_md)
+            #             text = nk.name_check(text)
+            #             protable.pro_text = text
+            #             protable.first_tag = result[0]
+            #             protable.second_tag = result[1]
+            #             df.at[int(i / 3), "대분류"] = result[0]
+            #             df.at[int(i / 3), "중분류"] = result[1]
+            #             trans_md = False
+            #             protable.note = "000"
+            #
+            #         # 적요가 공백일때 #################################
+            #         elif (trans_md != 'e') and (text in ["", " ", "  "]):
+            #             protable.pro_text = text
+            #             protable.first_tag = "공백"
+            #             protable.second_tag = "공백"
+            #             df.at[int(i / 3), "대분류"] = ""
+            #             df.at[int(i / 3), "중분류"] = ""
+            #             protable.note = "200"
+            #
+            #         # 거래구분이 이상할 때 ############################
+            #         elif trans_md == 'e':
+            #             protable.pro_text = text
+            #             protable.first_tag = ""
+            #             protable.second_tag = ""
+            #             df.at[int(i / 3), "대분류"] = ""
+            #             df.at[int(i / 3), "중분류"] = ""
+            #             protable.note = "333"
+            #
+            #         protable.event_dtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            #         protable.save()
+            #
+            # df.to_csv('/home/manager/django_web/save/%s' % new_file_name, encoding="utf-8-sig", index=False)
+            ###############################################################
 
-            nk = Nickonlpy()
-            nwt = NicWordTagging()
-            trans_md = False
-            ats_kdcd_dtl = False
+            # 현재버젼 ##############################################
+            try:
+                os.system('python work_func.py %s %s %s' % (userID, file_name, new_file_name))
+                if os.path.exists('/home/manager/django_web/media/%s' % file_name):
+                    os.remove('/home/manager/django_web/media/%s' % file_name)
+            except Exception as e:
+                print(e)
+                if os.path.exists('/home/manager/django_web/media/%s' % file_name):
+                    os.remove('/home/manager/django_web/media/%s' % file_name)
+            ###############################################################
 
-            for i, n in enumerate(tqdm(chunk_list)):
-                df.at[int(i / 3), "index"] = int(i / 3)
-                if i % 3 == 0:
-                    df.at[int(i / 3), "거래구분"] = n
-                    if n in ['1', '2']:
-                        trans_md = n
-                    else:
-                        trans_md = 'e'
-
-                if i % 3 == 1:
-                    df.at[int(i / 3), "거래유형"] = n
-                    ats_kdcd_dtl = n
-
-                if i % 3 == 2:
-                    protable = ProTable()
-                    protable.member_id = userID
-                    protable.file_name = file_name
-                    protable.new_file_name = new_file_name
-                    protable.trans_md = trans_md
-                    protable.ats_kdcd_dtl = ats_kdcd_dtl
-                    protable.ori_text = n
-                    df.at[int(i / 3), "적요"] = n
-
-                    # preprocessing
-                    text = find_null(n)
-                    text = ascii_check(text)
-                    text = change_upper(text)
-                    text = space_delete(text)
-                    text = remove_bank(text)
-                    text = corporatebody(text)
-                    text = numbers_to_zero(text)
-                    text = remove_specialchar(text)
-                    text = nk.predict_tokennize(text)
-
-                    # 정상일때 #######################################
-                    if (trans_md != 'e') and (text not in ["", " ", "  "]):
-                        # tagging
-                        result = nwt.text_tagging(text, trans_md)
-                        text = nk.name_check(text)
-                        protable.pro_text = text
-                        protable.first_tag = result[0]
-                        protable.second_tag = result[1]
-                        df.at[int(i / 3), "대분류"] = result[0]
-                        df.at[int(i / 3), "중분류"] = result[1]
-                        trans_md = False
-                        protable.note = "000"
-
-                    # 적요가 공백일때 #################################
-                    elif (trans_md != 'e') and (text in ["", " ", "  "]):
-                        protable.pro_text = text
-                        protable.first_tag = "공백"
-                        protable.second_tag = "공백"
-                        df.at[int(i / 3), "대분류"] = ""
-                        df.at[int(i / 3), "중분류"] = ""
-                        protable.note = "200"
-
-                    # 거래구분이 이상할 때 ############################
-                    elif trans_md == 'e':
-                        protable.pro_text = text
-                        protable.first_tag = ""
-                        protable.second_tag = ""
-                        df.at[int(i / 3), "대분류"] = ""
-                        df.at[int(i / 3), "중분류"] = ""
-                        protable.note = "333"
-
-                    protable.event_dtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                    protable.save()
-
-            df.to_csv('/home/manager/django_web/save/%s' % new_file_name, encoding="utf-8-sig", index=False)
 
             # 태깅후 data table 입력
             datatable.end_dtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")

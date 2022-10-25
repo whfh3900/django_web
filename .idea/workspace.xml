@@ -2,12 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6d4fa605-5846-4436-b26a-0f3af07c1104" name="Changes" comment="2022-09-29: numbers_to_zero 수정">
+      <change afterPath="$PROJECT_DIR$/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/work_func.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ats/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/ats/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ats/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/ats/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ats_module" beforeDir="false" afterPath="$PROJECT_DIR$/ats_module" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ats_module/TextTagging.py" beforeDir="false" afterPath="$PROJECT_DIR$/ats_module/TextTagging.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tagging/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/tagging/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nohup.out" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tagging/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/tagging/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tagging/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/tagging/views_linux.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tagging/views_windows.py" beforeDir="false" afterPath="$PROJECT_DIR$/tagging/views_windows.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,7 +42,7 @@
     &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/choi seung un/niccompany/2022년_상품개발/code/git/docker_django_mysql&quot;
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/choi seung un/niccompany/2022년_상품개발/code/git/django_web&quot;
   }
 }</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
