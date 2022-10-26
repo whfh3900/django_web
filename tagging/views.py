@@ -59,11 +59,18 @@ def tagging(request):
             file = request.FILES["testFile"]
             userID = context["userID"]
             file_name = request.POST["filename"]
+<<<<<<< HEAD
 
             try:
                 path = default_storage.save(file.name, file)
             except UnicodeEncodeError as e:
                 error_log = "에러: 파일명을 영문으로 변경해주세요. %s" % e
+=======
+            try:
+                path = default_storage.save(file.name, file)
+            except UnicodeEncodeError as e:
+                error_log = "파일명은 영문으로 변경해주세요." 
+>>>>>>> ffc486d2d839aec9825ebd01daa204f7e0eb05c6
                 response = JsonResponse({"success": False, "error": error_log})
                 response.status_code = 403
                 return response
@@ -201,8 +208,11 @@ def tagging(request):
                         protable.note = "333"
 
                     protable.event_dtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                    protable.save()
-            df.to_csv('./save/%s' % new_file_name, encoding="utf-8-sig", index=False)
+                    protable.save() 
+            if platform.system() == 'Windows':
+                df.to_csv('./save/%s' % new_file_name, encoding="utf-8-sig", index=False)
+            elif platform.system() == 'Linux':
+                df.to_csv('/home/manager/django_web/save/%s' % new_file_name, encoding='utf-8-sig', index=False)
             ###############################################################
 
 
