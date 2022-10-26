@@ -59,7 +59,13 @@ def tagging(request):
             file = request.FILES["testFile"]
             userID = context["userID"]
             file_name = request.POST["filename"]
-            path = default_storage.save(file.name, file)
+            try:
+                path = default_storage.save(file.name, file)
+            except UnicodeEncodeError as e:
+                error_log = "파일명은 영문으로 변경해주세요." 
+                response = JsonResponse({"success": False, "error": error_log})
+                response.status_code = 403
+                return response
 
             try:
                 # media 폴더에 저장
