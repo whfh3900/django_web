@@ -64,10 +64,6 @@ def tagging(request):
                 path = default_storage.save(file.name, file)
             except UnicodeEncodeError as e:
                 error_log = "에러: 파일명을 영문으로 변경해주세요. %s" % e
-            try:
-                path = default_storage.save(file.name, file)
-            except UnicodeEncodeError as e:
-                error_log = "에러: 파일명을 영문으로 변경해주세요. %s" % e
                 response = JsonResponse({"success": False, "error": error_log})
                 response.status_code = 403
                 return response
