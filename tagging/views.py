@@ -194,8 +194,11 @@ def tagging(request):
                         protable.note = "333"
 
                     protable.event_dtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                    protable.save()
-            df.to_csv('./save/%s' % new_file_name, encoding="utf-8-sig", index=False)
+                    protable.save() 
+            if platform.system() == 'Windows':
+                df.to_csv('./save/%s' % new_file_name, encoding="utf-8-sig", index=False)
+            elif platform.system() == 'Linux':
+                df.to_csv('/home/manager/django_web/save/%s' % new_file_name, encoding='utf-8-sig', index=False)
             ###############################################################
 
 
