@@ -59,14 +59,21 @@ def tagging(request):
             file = request.FILES["testFile"]
             userID = context["userID"]
             file_name = request.POST["filename"]
-            path = default_storage.save(file.name, file)
+
+            try:
+                path = default_storage.save(file.name, file)
+            except UnicodeEncodeError as e:
+                error_log = "에러: 파일명을 영문으로 변경해주세요. %s" % e
+                response = JsonResponse({"success": False, "error": error_log})
+                response.status_code = 403
+                return response
 
             try:
                 # media 폴더에 저장
                 chunks = default_storage.open(path).read().decode('utf-8-sig')
             except UnicodeDecodeError as e:
                 # time.sleep(0.5)
-                error_log = "다음의 인코딩 형식을 지원합니다.(utf-8) %s" % e
+                error_log = "에러: 다음의 인코딩 형식을 지원합니다.(utf-8) %s" % e
                 response = JsonResponse({"success": False, "error": error_log})
                 response.status_code = 403
                 default_storage.delete(path)
@@ -81,7 +88,7 @@ def tagging(request):
             for i, n in enumerate(columns):
                 if n != true_columns[i]:
                     # time.sleep(0.5)
-                    error_log = "<li>%s 컬럼이 없습니다. 데이터 형식을 확인하세요.</li><li>(컬럼순서: %s) </li><li>에러컬럼 : %s</li>" % (
+                    error_log = "에러: <li>%s 컬럼이 없습니다. 데이터 형식을 확인하세요.</li><li>(컬럼순서: %s) </li><li>에러컬럼 : %s</li>" % (
                         true_columns[i], str(true_columns), n)
                     response = JsonResponse({"success": False, "error": error_log})
                     response.status_code = 403
@@ -94,13 +101,13 @@ def tagging(request):
             data_len = int(round(len(chunk_list) / 3, 0))
             if data_len > 1000000:
                 # time.sleep(0.5)
-                error_log = "1000000건 이내만 처리 가능합니다. 파일을 다시 업로드 하세요."
+                error_log = "에러: 1000000건 이내만 처리 가능합니다. 파일을 다시 업로드 하세요."
                 response = JsonResponse({"success": False, "error": error_log})
                 response.status_code = 403
                 default_storage.delete(path)
                 return response
             elif data_len < 4:
-                error_log = "4건 이상만 처리 가능합니다. 파일을 다시 업로드 하세요."
+                error_log = "에러: 4건 이상만 처리 가능합니다. 파일을 다시 업로드 하세요."
                 response = JsonResponse({"success": False, "error": error_log})
                 response.status_code = 403
                 default_storage.delete(path)
