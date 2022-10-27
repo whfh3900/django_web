@@ -8,10 +8,10 @@ from django.core.files.storage import FileSystemStorage, default_storage
 # from django.contrib import messages
 
 # 이전버젼 ############################
-import pandas as pd
-from ats_module.TextPreprocessing import *
-from ats_module.TextTagging import *
-from tqdm import tqdm
+# import pandas as pd
+# from ats_module.TextPreprocessing import *
+# from ats_module.TextTagging import *
+# from tqdm import tqdm
 ######################################
 import os
 import datetime
