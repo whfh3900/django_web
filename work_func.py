@@ -2,8 +2,10 @@
 import sys
 import os
 import platform
-import django
+# import site
+# raise Exception(site.getsitepackages())
 
+import django
 # if platform.system() == 'Windows':
 #     sys.path.append('C:\\Users\\choi seung un\\niccompany\\2022년_상품개발\\code\\git\\django_web')
 # elif platform.system() == 'Linux':
