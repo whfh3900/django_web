@@ -2,11 +2,17 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
-from .models import DataTable, AuthUser
+from .models import DataTable, AuthUser, ProTable
 from django.http import JsonResponse, FileResponse
 from django.core.files.storage import FileSystemStorage, default_storage
 # from django.contrib import messages
 
+# 이전버젼 ############################
+# import pandas as pd
+# from ats_module.TextPreprocessing import *
+# from ats_module.TextTagging import *
+# from tqdm import tqdm
+######################################
 import os
 import datetime
 import platform
@@ -53,20 +59,26 @@ def tagging(request):
             file = request.FILES["testFile"]
             userID = context["userID"]
             file_name = request.POST["filename"]
-            path = default_storage.save(file.name, file)
+
+            try:
+                path = default_storage.save(file.name, file)
+            except UnicodeEncodeError as e:
+                error_log = "에러: 파일명을 영문으로 변경해주세요. %s" % e
+                response = JsonResponse({"success": False, "error": error_log})
+                response.status_code = 403
+                return response
 
             try:
                 # media 폴더에 저장
                 chunks = default_storage.open(path).read().decode('utf-8-sig')
             except UnicodeDecodeError as e:
                 # time.sleep(0.5)
-                error_log = "다음의 인코딩 형식을 지원합니다.(utf-8) %s" % e
+                error_log = "에러: 다음의 인코딩 형식을 지원합니다.(utf-8) %s" % e
                 response = JsonResponse({"success": False, "error": error_log})
                 response.status_code = 403
+                default_storage.delete(path)
                 return response
 
-            # media 폴더에 저장된 파일 바로삭제
-            # default_storage.delete(path)
             chunks = chunks.replace('\r\n', ',')
             chunk_list = chunks.split(',')[:-1]
             columns = chunk_list[0:3]
@@ -76,10 +88,11 @@ def tagging(request):
             for i, n in enumerate(columns):
                 if n != true_columns[i]:
                     # time.sleep(0.5)
-                    error_log = "<li>%s 컬럼이 없습니다. 데이터 형식을 확인하세요.</li><li>(컬럼순서: %s) </li><li>에러컬럼 : %s</li>" % (
+                    error_log = "에러: <li>%s 컬럼이 없습니다. 데이터 형식을 확인하세요.</li><li>(컬럼순서: %s) </li><li>에러컬럼 : %s</li>" % (
                         true_columns[i], str(true_columns), n)
                     response = JsonResponse({"success": False, "error": error_log})
                     response.status_code = 403
+                    default_storage.delete(path)
                     return response
             ###############################################################
 
@@ -88,14 +101,16 @@ def tagging(request):
             data_len = int(round(len(chunk_list) / 3, 0))
             if data_len > 1000000:
                 # time.sleep(0.5)
-                error_log = "1000000건 이내만 처리 가능합니다. 파일을 다시 업로드 하세요."
+                error_log = "에러: 1000000건 이내만 처리 가능합니다. 파일을 다시 업로드 하세요."
                 response = JsonResponse({"success": False, "error": error_log})
                 response.status_code = 403
+                default_storage.delete(path)
                 return response
             elif data_len < 4:
-                error_log = "4건 이상만 처리 가능합니다. 파일을 다시 업로드 하세요."
+                error_log = "에러: 4건 이상만 처리 가능합니다. 파일을 다시 업로드 하세요."
                 response = JsonResponse({"success": False, "error": error_log})
                 response.status_code = 403
+                default_storage.delete(path)
                 return response
             ###############################################################
 
@@ -113,6 +128,8 @@ def tagging(request):
 
 
             # 이전버젼 ##############################################
+            # media 폴더에 저장된 파일 바로삭제
+            # default_storage.delete(path)
             # df = pd.DataFrame(columns=["index", "거래구분", "거래유형", "적요", "대분류", "중분류", "비고"])
             # nk = Nickonlpy()
             # nwt = NicWordTagging()
@@ -185,22 +202,26 @@ def tagging(request):
             #
             #         protable.event_dtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             #         protable.save()
-            # df.to_csv('./save/%s' % new_file_name, encoding="utf-8-sig", index=False)
+            # if platform.system() == 'Windows':
+            #     df.to_csv('./save/%s' % new_file_name, encoding="utf-8-sig", index=False)
+            # elif platform.system() == 'Linux':
+            #     df.to_csv('/home/manager/django_web/save/%s' % new_file_name, encoding='utf-8-sig', index=False)
             ###############################################################
 
 
-            # 현재버젼 ##############################################
-
+            # 현재버젼 Test중 ##############################################
             if platform.system() == 'Windows':
                 media_path = './media/%s' % file_name
             elif platform.system() == 'Linux':
+                media_path = '/home/manager/django_web/media/%s' % file_name
+            else:
                 media_path = '/home/manager/django_web/media/%s' % file_name
 
             try:
                 os.system('python work_func.py %s %s %s' % (userID, file_name, new_file_name))
             except Exception as e:
                 print(e)
-
+            # 작업파일 삭제
             if os.path.exists(media_path):
                 os.remove(media_path)
             ###############################################################

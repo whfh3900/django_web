@@ -1,8 +1,11 @@
+import django
+django.setup()
+
 import sys
 import pandas as pd
 import numpy as np
-import pymysql
-import my_settings
+from tagging.models import ProTable
+
 from tqdm import tqdm
 from ats_module.TextPreprocessing import *
 from ats_module.TextTagging import *
@@ -34,18 +37,9 @@ df["중분류"] = np.nan
 df["비고"] = np.nan
 # print(df.to_string())
 
-db_info = my_settings.DATABASES['default']
-db = pymysql.connect(
-    user=db_info['USER'],
-    passwd=db_info['PASSWORD'],
-    host=db_info['HOST'],
-    db=db_info['NAME'],
-    charset='utf8'
-)
-cursor = db.cursor(pymysql.cursors.DictCursor)
-
 nk = Nickonlpy()
 nwt = NicWordTagging()
+protable = ProTable()
 ############################################
 
 def work_func(df):
@@ -54,7 +48,9 @@ def work_func(df):
         trans_md = str(n['거래구분'])
         ats_kdcd_dtl = str(n['거래유형'])
         pro_text = ""
-        note = ""
+        protable.ori_text = ori_text
+        protable.trans_md = trans_md
+        protable.ats_kdcd_dtl = ats_kdcd_dtl
 
         if trans_md in ['1', '2']:
             # preprocessing
@@ -73,11 +69,9 @@ def work_func(df):
                 result = nwt.text_tagging(pro_text, trans_md)
                 pro_text = nk.name_check(pro_text)
                 note = "000"
-
             else:
                 result = ("", "")
                 note = "200"
-
         else:
             result = ("", "")
             note = "333"
@@ -85,12 +79,14 @@ def work_func(df):
         df.at[i, "대분류"] = result[0]
         df.at[i, "중분류"] = result[1]
         event_dtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        sql = '''INSERT INTO `pro_table` (member_id, file_name, new_file_name, trans_md, ats_kdcd_dtl, ori_text, pro_text, first_tag, second_tag, event_dtime, note) 
-            VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');''' % (userID, file_name, new_file_name, trans_md, ats_kdcd_dtl, ori_text, pro_text, result[0], result[1], event_dtime, note)
-        cursor.execute(sql)
-        db.commit()
-    return df
 
+        protable.pro_text = pro_text
+        protable.first_tag = result[0]
+        protable.second_tag = result[1]
+        protable.event_dtime = event_dtime
+        protable.note = note
+
+    return df
 
 
 def parallel_dataframe(df, func, num_cores):
@@ -108,10 +104,11 @@ if __name__ == '__main__':
         save_path = './save/%s' % new_file_name
     elif platform.system() == 'Linux':
         save_path = '/home/manager/django_web/save/%s' % new_file_name
+    else:
+        save_path = '/home/manager/django_web/save/%s' % new_file_name
 
     num_cores = 4
     df = parallel_dataframe(df, work_func, num_cores)
     df.to_csv(save_path, encoding='utf-8-sig')
-    db.close()
 
 
