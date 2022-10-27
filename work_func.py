@@ -1,9 +1,16 @@
 # -*- coding: utf-8 -*-
-
-import django
-django.setup()
-
 import sys
+import os
+import platform
+import django
+
+# if platform.system() == 'Windows':
+#     sys.path.append('C:\\Users\\choi seung un\\niccompany\\2022년_상품개발\\code\\git\\django_web')
+# elif platform.system() == 'Linux':
+#     sys.path.append('/home/manager/django_web')
+#
+# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ats.settings')
+django.setup()
 import pandas as pd
 import numpy as np
 from tagging.models import ProTable
@@ -11,10 +18,8 @@ from tagging.models import ProTable
 from tqdm import tqdm
 from ats_module.TextPreprocessing import *
 from ats_module.TextTagging import *
-from multiprocessing.pool import ThreadPool as Pool
 import multiprocessing
 import datetime
-import platform
 
 if platform.system() == 'Windows':
     from multiprocessing import Pool
@@ -84,6 +89,7 @@ def work_func(df):
         protable.second_tag = result[1]
         protable.event_dtime = event_dtime
         protable.note = note
+        protable.save()
 
     return df
 

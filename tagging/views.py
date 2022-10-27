@@ -1,4 +1,5 @@
 # Create your views here.
+import sys
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
@@ -219,13 +220,14 @@ def tagging(request):
                 media_path = '/home/manager/django_web/media/%s' % file_name
 
             try:
-                #s.system('source /homa/manager/ats/bin/activate')
-                #s.system('python /home/manager/django_web/work_func.py %s %s %s' % (userID, file_name, new_file_name))
-
-                subprocess.run(['source','/homa/manager/ats/bin/activate'], shell=True, check=True, excutable='/bin/bash')
-                subprocess.run(['python','/home/manager/django_web/work_func.py', userID, file_name, new_file_name], shell=True, check=True)
+                if platform.system() == 'Windows':
+                    os.system('python work_func.py %s %s %s' % (userID, file_name, new_file_name))
+                elif platform.system() == 'Linux':
+                    subprocess.run('bash -c "conda activate ats; python -V"', shell=True)
+                    subprocess.run('bash -c "python /home/manager/django_web/work_func.py  %s %s %s"' % (userID, file_name, new_file_name), shell=True)
             except Exception as e:
                 print(e)
+                
             # 작업파일 삭제
             if os.path.exists(media_path):
                 os.remove(media_path)
