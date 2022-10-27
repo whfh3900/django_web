@@ -66,10 +66,14 @@ def work_func(df):
             pro_text = corporatebody(pro_text)
             pro_text = numbers_to_zero(pro_text)
             pro_text = remove_specialchar(pro_text)
-            pro_text = nk.predict_tokennize(pro_text)
 
-            if pro_text not in ["", " ", "  "]:
+            # 문의
+            pro_text = space_delete(pro_text)
+            pro_text = find_null(pro_text)
+
+            if pro_text != "공백":
                 # tagging
+                pro_text = nk.predict_tokennize(pro_text)
                 result = nwt.text_tagging(pro_text, trans_md)
                 pro_text = nk.name_check(pro_text)
                 note = "000"
