@@ -16,6 +16,7 @@ from django.core.files.storage import FileSystemStorage, default_storage
 import os
 import datetime
 import platform
+import subprocess
 
 @csrf_exempt
 def home(request):
@@ -218,7 +219,11 @@ def tagging(request):
                 media_path = '/home/manager/django_web/media/%s' % file_name
 
             try:
-                os.system('python work_func.py %s %s %s' % (userID, file_name, new_file_name))
+                #s.system('source /homa/manager/ats/bin/activate')
+                #s.system('python /home/manager/django_web/work_func.py %s %s %s' % (userID, file_name, new_file_name))
+
+                subprocess.run(['source','/homa/manager/ats/bin/activate'], shell=True, check=True, excutable='/bin/bash')
+                subprocess.run(['python','/home/manager/django_web/work_func.py', userID, file_name, new_file_name], shell=True, check=True)
             except Exception as e:
                 print(e)
             # 작업파일 삭제

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import django
 django.setup()
 
@@ -9,10 +11,7 @@ from tagging.models import ProTable
 from tqdm import tqdm
 from ats_module.TextPreprocessing import *
 from ats_module.TextTagging import *
-<<<<<<< HEAD
 from multiprocessing.pool import ThreadPool as Pool
-=======
->>>>>>> e6afc7c1a39be0de522b0bb44092ac2507517e73
 import multiprocessing
 import datetime
 import platform
