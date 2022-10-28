@@ -18,5 +18,5 @@ echo "End Deletefile.sh"
 
 # Crontab -------------------------------------
 #crontab -e
-#00 00 * * * /home/manager/django_web/Script/Deletefile.sh
+#00 00 * * * /home/manager/django_web/Script/Deletefile.sh > /home/manager/django_web/Script/Deletefile.sh.log 2>&1
 # -----------------------------------------------
