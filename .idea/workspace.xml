@@ -2,10 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6d4fa605-5846-4436-b26a-0f3af07c1104" name="Changes" comment="2022-09-29: numbers_to_zero 수정">
+      <change afterPath="$PROJECT_DIR$/Script/Deletedata.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Script/Deletefile.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apache2/000-default-le-ssl.conf" beforeDir="false" afterPath="$PROJECT_DIR$/apache2/000-default-le-ssl.conf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apache2/000-default.conf" beforeDir="false" afterPath="$PROJECT_DIR$/apache2/000-default.conf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ats_module" beforeDir="false" afterPath="$PROJECT_DIR$/ats_module" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ats_module/TextTagging.py" beforeDir="false" afterPath="$PROJECT_DIR$/ats_module/TextTagging.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/work_func.py" beforeDir="false" afterPath="$PROJECT_DIR$/work_func.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
