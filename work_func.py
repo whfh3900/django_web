@@ -73,7 +73,7 @@ def work_func(df):
             pro_text = space_delete(pro_text)
             pro_text = find_null(pro_text)
 
-            if pro_text != "공백":
+            if (pro_text != "공백") or (len(pro_text) >= 1):
                 # tagging
                 pro_text = nk.predict_tokennize(pro_text)
                 result = nwt.text_tagging(pro_text, trans_md)
