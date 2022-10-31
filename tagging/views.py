@@ -83,6 +83,7 @@ def tagging(request):
 
             chunks = chunks.replace('\r\n', ',')
             chunk_list = chunks.split(',')[:-1]
+            del chunks
             columns = chunk_list[0:3]
             true_columns = ["거래구분", "거래유형", "적요"]
 
@@ -116,6 +117,8 @@ def tagging(request):
                 return response
             ###############################################################
 
+            # 변수 삭제
+            del chunk_list
             new_file_name = file_name.split('.')[0] + '_' + datetime.datetime.now().strftime("%Y%m%d%H%M%S") + '.csv'
 
             # 태깅전 data table 입력
@@ -305,5 +308,3 @@ def introduction_download(request):
 
         response['Content-Disposition'] = 'attachment; filename="{}"'.format('다운로드.pdf')
         return response
-
-
