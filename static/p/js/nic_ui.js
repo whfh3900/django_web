@@ -1,3 +1,5 @@
+
+
 /* 태깅히스토리 */
 function popOpen() {
 	$(".history_l").fadeIn();
@@ -20,18 +22,5 @@ function popOpen2() {
 
 function popClose2() {
 	$(".tagging").fadeOut();
-	$(".modal").fadeOut();
-};
-
-
-
-/* 공통 얼럿 */
-function popOpen3() {
-	$(".al_pop").fadeIn();
-	$(".modal").fadeIn();
-};
-
-function popClose3() {
-	$(".al_pop").fadeOut();
 	$(".modal").fadeOut();
 };

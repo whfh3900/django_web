@@ -17,6 +17,7 @@ import pymysql
 
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
+from django.contrib import messages
 
 sentry_sdk.init(
     dsn = "https://9921d0e6981c49c8bcdc201f02f5f478@o4503969364770816.ingest.sentry.io/4503969369227266",
@@ -48,8 +49,13 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    # 'apps.authentication.apps.AuthenticationConfig',
+    # 'apps.tagging.apps.TaggingConfig',
+    # 'apps.dashboard.apps.DashboardConfig',
+    'apps.authentication',
+    'apps.tagging',
+    'apps.dashboard',
 
-    'tagging.apps.TaggingConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -151,3 +157,11 @@ STATIC_ROOT=os.path.join(BASE_DIR, 'staticfiles')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'alert-info',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
+}

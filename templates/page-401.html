@@ -3,58 +3,46 @@
 <html lang="ko">
  <head>
   	<meta charset="UTF-8">
-	 
+
   	<meta name="Author" content="">
   	<meta name="Keywords" content="">
   	<meta name="Description" content="">
 
   	<title>Real? ATS</title>
+
 	<link href="{% static 'p/css/ats.css' %}" rel="stylesheet">
 	<script src="{% static 'p/js/jquery-3.1.0.min.js' %}"></script>
 	<script src="{% static 'p/js/nic_ui.js' %}"></script>
-	
-	
+
+
  </head>
  <body>
-  
+
   <div id="wrap" >
-	
+
 	<!-- 헤더 -->
 	<div class="header">
 		<div class="h_inner">
 			<span href="#" class="logo_ats"></span>
 			<a type="button" class="btn_X" href="{% url 'home' %}"></a>
 		</div>
-	</div>	
-	<!--// 헤더 -->	
+	</div>
+	<!--// 헤더 -->
 
-	
 	<!-- 컨텐츠 -->
 	<div class="Section_01">
-		{% csrf_token %}
-		<div class="login_area">			
-			<form id="login_check" method="POST" enctype="multipart/form-data">
-
-				<span class="txt_cGrey">발급된 계정으로 로그인 하세요.</span>
-				<input class="input_id" id="userID" name="userID" type="text" placeholder="ID"/>
-				<input class="input_id" id="password" name="password" type="password" placeholder="Password"/>
-				<input type="submit" id="return_login" class="btn_01" value="로그인"/>
-
-				<div>
-					닉컴퍼니와 서비스 제휴를 한 고객이 이용하는 서비스 입니다.
-					리얼?ATS를 이용하시려면 <a href="mailto:nic@niccompany.co.kr">real.ats@niccompany.co.kr</a>로 문의해주세요.
-				</div>
-			</form>
+		<div class="login_area">
+			<p class="al_text">Unauthorized.</p>
+			<a type="button" class="btn_01" href="{% url 'home' %}">HOME</a>
 		</div>
 	</div>
-	<!-- // 컨텐츠 -->
-
+	<!--// 컨텐츠 -->
 
 	<!-- 푸터 -->
 	<div class="footer_w">
 		<p>ⓒ NIC company</p>
 		<a href="http://www.niccompany.co.kr" target="_blank"></a>
-	</div>	  
+	</div>
 	<!--// 푸터 -->
 
   </div>

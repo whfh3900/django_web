@@ -1,9 +1,7 @@
 # Create your views here.
-import sys
 from django.shortcuts import render
-from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
-from .models import DataTable, AuthUser, ProTable
+from .models import DataTable
 from django.http import JsonResponse, FileResponse
 from django.core.files.storage import FileSystemStorage, default_storage
 # from django.contrib import messages
@@ -14,52 +12,25 @@ from django.core.files.storage import FileSystemStorage, default_storage
 # from ats_module.TextTagging import *
 # from tqdm import tqdm
 ######################################
+import sys
 import os
 import datetime
 import platform
-import subprocess
-
-@csrf_exempt
-def home(request):
-    return render(request, 'UI-MA-00-00.html')
-
-
-@csrf_exempt
-def ats_login(request):
-    if request.method == "GET":
-        logout(request)
-        return render(request, "UI-AT-JO-00.html")
-
-    elif request.method == "POST":
-        userID = request.POST['userID']
-        password = request.POST['password']
-        user = authenticate(request, username=userID, password=password)
-        global context
-
-        if user is not None:
-            login(request, user)
-            data_list = DataTable.objects.filter(member_id=userID).values('new_file_name', 'start_dtime', 'end_dtime',
-                                                                          'data_len', 'pro_result')
-            name = list(AuthUser.objects.filter(username=userID).values('first_name', 'last_name'))[0]
-            name = name['first_name'] + name['last_name']
-            context = {'data_list': data_list, 'userID': userID, 'name': name, 'data_len': len(data_list)}
-            # Redirect to a success page.
-            return render(request, 'UI-AT-DA-00.html', context)
-
-        else:
-            # Return an 'invalid login' error message.
-            return render(request, "UI-AT-JO-01.html")
-
+#
 
 @csrf_exempt
 def tagging(request):
     if request.user.is_authenticated:
+        userID = str(request.user)
         if request.method == "GET":
-            return render(request, 'UI-AT-DA-00.html')
+            history_list = DataTable.objects.filter(member_id=userID).values('new_file_name', 'start_dtime', 'end_dtime',
+                                                                            'data_len', 'pro_result')
+            context = {'history_list': history_list}
+            return render(request, 'UI-AT-DA-00.html', context)
 
         elif request.method == "POST":
             file = request.FILES["testFile"]
-            userID = context["userID"]
+            userID = str(request.user)
             file_name = request.POST["filename"]
 
             try:
@@ -84,8 +55,13 @@ def tagging(request):
             chunks = chunks.replace('\r\n', ',')
             chunk_list = chunks.split(',')[:-1]
             del chunks
-            columns = chunk_list[0:3]
-            true_columns = ["거래구분", "거래유형", "적요"]
+            # 이전버젼
+            # columns = chunk_list[0:3]
+            # true_columns = ["거래구분", "거래유형", "적요"]
+
+            # 현 버젼
+            columns = chunk_list[0:4]
+            true_columns = ["거래시간", "거래구분", "거래유형", "적요"]
 
             # 데이터 컬럼형식 검사 ###########################################
             for i, n in enumerate(columns):
@@ -100,8 +76,14 @@ def tagging(request):
             ###############################################################
 
             # 데이터 길이 검사 ##############################################
-            chunk_list = chunk_list[3:]
-            data_len = int(round(len(chunk_list) / 3, 0))
+            # 이전버젼
+            # chunk_list = chunk_list[3:]
+            # data_len = int(round(len(chunk_list) / 3, 0))
+
+            # 현 버젼
+            chunk_list = chunk_list[4:]
+            data_len = int(round(len(chunk_list) / 4, 0))
+
             if data_len > 1000000:
                 # time.sleep(0.5)
                 error_log = "에러: 1000000건 이내만 처리 가능합니다. 파일을 다시 업로드 하세요."
@@ -109,7 +91,7 @@ def tagging(request):
                 response.status_code = 403
                 default_storage.delete(path)
                 return response
-            elif data_len < 4:
+            elif data_len < 4: # core 개수
                 error_log = "에러: 4건 이상만 처리 가능합니다. 파일을 다시 업로드 하세요."
                 response = JsonResponse({"success": False, "error": error_log})
                 response.status_code = 403
@@ -229,28 +211,30 @@ def tagging(request):
                     # subprocess.run('bash -c "conda activate ats; python3 -V"', shell=True)
                     # subprocess.run('bash -c "python3 /home/manager/django_web/work_func.py %s %s %s"' % (userID, file_name, new_file_name), shell=True)
                     os.system('python3 /home/manager/django_web/work_func.py %s %s %s' % (userID, file_name, new_file_name))
+                # 태깅후 data table 입력
+                datatable.pro_result = '완료'
+
             except Exception as e:
-                print(e)
-                
+                # 태깅후 data table 입력
+                datatable.pro_result = '에러'
+                datatable.note = e
+
             # 작업파일 삭제
             if os.path.exists(media_path):
                 os.remove(media_path)
+            datatable.end_dtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            datatable.save()
             ###############################################################
 
-            # 태깅후 data table 입력
-            datatable.end_dtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            datatable.pro_result = '완료'
-            datatable.save()
-
-            return JsonResponse({"message": "데이터 처리가 완료되었습니다. 파일을 다운로드하세요.", "filename": new_file_name}, status=200)
+            return JsonResponse({"filename": new_file_name}, status=200)
     else:
-        return JsonResponse({"message": "please login!"}, status=200)
+        return render(request, 'page-401.html')
 
 
 @csrf_exempt
 def complete_download(request):
     if request.method == "GET":
-        return render(request, 'UI-AT-DA-00.html')
+        return render(request, 'page-401.html')
 
     elif request.method == "POST":
         new_file_name = request.POST["new_file_name"]
@@ -263,6 +247,7 @@ def complete_download(request):
             file_name = os.path.basename('/home/manager/django_web/save/%s' % new_file_name)
 
         fs = FileSystemStorage(file_path)
+
         response = FileResponse(fs.open(file_name, 'rb'),
                                 content_type='application/vnd.ms-excel')
         response['Content-Disposition'] = 'attachment; filename="{}"'.format(new_file_name)
@@ -272,7 +257,7 @@ def complete_download(request):
 @csrf_exempt
 def history_download(request):
     if request.method == "GET":
-        return render(request, 'UI-AT-DA-00.html')
+        return render(request, 'page-401.html')
 
     elif request.method == "POST":
         history_file_name = request.POST["history_file_name"]
@@ -291,20 +276,3 @@ def history_download(request):
         return response
 
 
-@csrf_exempt
-def introduction_download(request):
-    if request.method == "GET":
-        return render(request, 'UI-MA-00-00.html')
-
-    elif request.method == "POST":
-        if platform.system() == 'Windows':
-            fs = FileSystemStorage(os.path.dirname('./'))
-            response = FileResponse(fs.open('file.pdf', 'rb'))
-        elif platform.system() == 'Linux':
-            file_path = os.path.dirname('/home/manager/django_web/file.pdf')
-            file_name = os.path.basename('/home/manager/django_web/file.pdf')
-            fs = FileSystemStorage(file_path)
-            response = FileResponse(fs.open(file_name, 'rb'))
-
-        response['Content-Disposition'] = 'attachment; filename="{}"'.format('다운로드.pdf')
-        return response

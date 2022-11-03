@@ -1,44 +1,26 @@
 <!doctype html>
+{% extends 'base.html' %}
 {% load static %}
+
+<!--<script src="{% static 'p/js/jquery.event.drag-1.7.1.min.js' %}"></script>-->
+<!--<script src="{% static 'p/js/ajax.js' %}"></script>-->
+<!--<script src="{% static 'p/js/nic_ui.js' %}"></script>-->
+
 <html lang="ko">
- <head>
-  	<meta charset="UTF-8">
-	 
-  	<meta name="Author" content="">
-  	<meta name="Keywords" content="">
-  	<meta name="Description" content="">
 
-  	<title>Real? ATS</title>
-  	
-	<!-- <link href="../static/p/css/ats.css" rel="stylesheet"> -->
-	<!-- <script src="../static/p/js/jquery-3.1.0.min.js"></script> -->
-	<!-- <script src="../static/p/js/nic_ui.js"></script>  -->
-
-	<link href="{% static 'p/css/ats.css' %}" rel="stylesheet">
-	<script src="{% static 'p/js/jquery-3.1.0.min.js' %}"></script>
-	<script src="{% static 'p/js/jquery.event.drag-1.7.1.min.js' %}"></script>
-	<script src="{% static 'p/js/nic_ui.js' %}"></script> 
-
-
- </head>
+<head>
+</head>
  <body>
-  
+  {% block content %}
   <div id="wrap" >
-	
 	<!-- 헤더 -->
 	<div class="header">
 		<div class="h_inner">
 			<span href="#" class="logo_ats"></span>
-			{% if data_len == 0 %}
-				<button type="button" class="history_open h_disable">태깅이력보기</button>
-			{% else %}
-				<button type="button" class="history_open" onclick="popOpen()">태깅이력보기</button>
-			{% endif %}			
-			
+			<button type="button" class="history_open" onclick="popOpen()">태깅이력보기</button>
 			<form id="logout" method="GET" action="{% url 'ats_login' %}">
 				<input type="submit" class="logout" value="로그아웃"/>
 			</form>
-			
 			<a type="button" class="btn_X" href="{% url 'home' %}"></a>
 		</div>
 		
@@ -57,12 +39,12 @@
 				<li>태깅데이터</li>
 <!--				<li>시작시간</li>-->
 <!--				<li>종료시간</li>-->
-
 				<li>처리시간</li>
 				<li>처리건수</li>
 				<li>결과</li>
 			</ul>
-			{% for i in data_list %}
+
+			{% for i in history_list %}
 			<ul>
 				<li>
 					<form id="history" method="POST" action="{% url 'history_download' %}" enctype="multipart/form-data">
@@ -72,8 +54,8 @@
 						{% else %}
 							<input type="submit" name="history_file_name" id="history_file_name" value="{{i.new_file_name}}"/>
 						{% endif %}
-
 					</form>
+
 				</li>
 <!--				<li>{{i.start_dtime}}</li>-->
 <!--				<li>{{i.end_dtime}}</li>-->
@@ -84,6 +66,7 @@
 			{% endfor %}
 		</div>
 	</div>
+
 	  
 	
 	<!-- 태깅중  -->
@@ -110,13 +93,9 @@
 					{% csrf_token %}
 					<div class="file_box">
 						<input class="btn_uplode btn-file d-none" type="file" name="testFile" id="testFile"/>
-						<!--<input class="btn-file d-none" type="file" id="testFile" style="display:none" />-->
-						<!-- <label for="testFile"></label>  -->
 						<span id="testFileNm" class="file_upload">여기에 csv 파일을 놓거나 '+' 버튼을 클릭하세요</span>
 						<div class="btn_l"></div>
 					</div>
-					<!-- class에서 disable 제거하면 버튼 활성 -->
-					<!-- <button type="button" class="btn_01"  onclick="popOpen2()">카테고리 태깅 시작</button> -->
 					<div id="tag_box">
 						<input type="submit" id="tag_btn" class="btn_01 disable" value="카테고리 태깅 시작" disabled />
 					</div>
@@ -139,16 +118,7 @@
 			</div>
 		</div>
 	</div>
-	<!--// 컨텐츠 -->
-
-	<!-- 푸터 -->
-	<div class="footer_w">
-		<p>ⓒ NIC company</p>
-		<a href="http://nic@niccompany.co.kr" target="_blank"></a>
-	</div>	  
-	<!--// 푸터 -->
-
   </div>
-
+  {% endblock %}
  </body>
 </html>

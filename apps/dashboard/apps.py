@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class TaggingConfig(AppConfig):
+class DashboardConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'tagging'
+    name = 'apps.dashboard'

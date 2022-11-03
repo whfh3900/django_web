@@ -1,6 +1,8 @@
 @charset "utf-8";
 
+
 @import url("https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@1.0/nanumsquare.css");
+
 
 /* base */
 * {margin:0; padding:0; border:0; background:none; word-break:break-all; word-break:keep-all; vertical-align:baseline; -webkit-text-size-adjust:none; -moz-text-size-adjust: none; -ms-text-size-adjust: none; font-family:'NanumSquare', Sans-serif; }
@@ -12,15 +14,19 @@ a:hover, a:focus {text-decoration:underline}
 a, button, :focus, a:focus, button:focus, a:active, a:hover {outline:0}
 *, *:before, *:after {-webkit-box-sizing:border-box; -moz-box-sizing:border-box; box-sizing:border-box}
 
+
 /* common */
 /* 대체 텍스트 */
 .ir {position:absolute; left:-9999em; top:-9999em; z-index:-1; font-size:9px; text-indent:-99999em;}
 
+
 /*  말줄임 처리 */
 .ellipsis {white-space:nowrap; text-overflow:ellipsis; overflow:hidden;}
 
+
 /* 반투명 모달 레이어 */
 .modal {display:none; position:fixed; left:0; top:0; z-index:5; width:100%; height:100%; background-color:#000; opacity:0.6;}
+
 
 /* font color */
 [class*="cWhite"] {color:#fff;}
@@ -28,11 +34,12 @@ a, button, :focus, a:focus, button:focus, a:active, a:hover {outline:0}
 [class*="cGrey"] {color:#767676;}
 [class*="cLight"] {color:#c0c0c0;}
 [class*="cBlue"] {color:#389ed6;}
-	
-/* HEADER */
 
+
+/* HEADER */
 	[class^="logo_"] {display:inline-block; width:100px; height:34px; }
 	[class^="menuB_"] {position:absolute; top:0; right:6px; width:70px; height:34px; }
+
 
 
 .header {position:relative; height:80px; text-align: center;}
@@ -52,8 +59,9 @@ a, button, :focus, a:focus, button:focus, a:active, a:hover {outline:0}
 .history_l {position:fixed; left:50%; top:80px; margin-left:-500px; z-index:50; width:1000px; height:auto; min-height:400px; overflow:hidden; background-color:#fff; padding-bottom: 40px; display:none;}
 	.title_pop {display:inline-block; padding:45px 0 30px 40px; font-size:26px; font-weight:900;}
 		.title_pop p {display:inline-block; color:#767676; font-size:14px; font-weight:400; margin-left:10px;}
+
 	.btn_Close {position:absolute; right:20px; top:40px; z-index:20; width:70px; height:34px; background:url('../../images/p_menu_x.png') no-repeat center; }
-	.history_list {display:inline-block; width:920px; height:auto; max-height:400px; border:1px solid #666; margin-left:40px; overflow-y: auto;}	
+	.history_list {display:inline-block; width:920px; height:auto; max-height:400px; border:1px solid #666; margin-left:40px; overflow-y: auto;}
 	.history_list ul{display:block; height:41px; color:#666; font-size:14px; text-align:center; border:0; font-weight:400; border-top:1px solid #ccc; letter-spacing: -1px;}
 	.history_list ul:first-child {color:#333; background-color:#eee; border:0; font-weight:700; }
 		.history_list ul li {display:inline-block; text-align:center; padding:12px; border-right:1px solid #ccc}
@@ -65,15 +73,18 @@ a, button, :focus, a:focus, button:focus, a:active, a:hover {outline:0}
 		.history_list ul li input:hover {color:#389ed6; text-decoration: underline; cursor: pointer;}
 		.history_list ul li input.ing {color:#666; text-decoration: none; font-size: 14px; padding:0 20px;}
 		.history_list ul li input.ing:hover {color:#666; text-decoration: none; cursor: default;}
-	
+
+
 .tagging {position:fixed; left:50%; top:140px; margin-left:-200px; z-index:50; width:400px; height:300px; background-color:#fff; display: none; text-align:center; }
 	.tagging p {display:inline-block; width:200px; height:70px; margin-top:80px; background: url("../../images/timeline.gif") no-repeat center;}
 	.tagging span {display:block; font-size:18px; color:#2a2a2a; line-height:28px; white-space: pre-line;}
 
 
+
 .al_pop {position:fixed; left:50%; top:140px; margin-left:-210px; z-index:50; width:420px; height:300px; background-color:#fff; display:none;}
-	.al_pop .al_text {display:block; position:relative; font-size:20px; color:#2a2a2a; white-space: pre-line; text-align:center; padding:20px 30px;; word-break: keep-all; line-height:30px;}	
+	.al_pop .al_text {display:block; position:relative; font-size:20px; color:#2a2a2a; white-space: pre-line; text-align:center; padding:20px 30px;; word-break: keep-all; line-height:30px;}
 	.al_pop .btn_01 {position:absolute; bottom:30px; left:50%; margin-left: -120px; width:240px;}
+
 
 /* FOOTER */
 .footer_w {display:inline-block; padding:25px 30px; width:100%; height:70px; border-top:1px solid #f0f0f0;}
@@ -84,6 +95,7 @@ a, button, :focus, a:focus, button:focus, a:active, a:hover {outline:0}
 
 /* layout */
 #wrap {display: inline-block; position:relative; width:1200px; top:0; left:50%; margin-left:-600px; background-color: #fff;}
+
 
 /* body */
 [class^="Section_"] {display:inline-block; margin:0 auto; width:100%;}
@@ -114,7 +126,6 @@ a, button, :focus, a:focus, button:focus, a:active, a:hover {outline:0}
 				.area03_b02 {background:url("../../images/area03_bg02.jpg") no-repeat left bottom;}
 				.text_m2 {display: inline-block; font-size:20px; font-weight: 900; letter-spacing: -2px; line-height:26px; padding-bottom: 10px; width:100%; }
 				.text_s2 {display: inline-block; font-size:16px; font-weight: 400; letter-spacing: -1px; line-height:24px; padding-bottom: 10px; width:100%; white-space: pre-line;}
-
 
 		.Section_01 .login_area {display:inline-block; width:100%; text-align: center; height:780px; white-space: pre-line; padding-top:100px; background:url("../../images/logo_back.png") no-repeat center bottom;}
 			.login_area span {display: inline-block; width:255px; text-align: left; font-size:16px; height:35px; margin:0; color:#2a2a2a; font-weight: 700;}

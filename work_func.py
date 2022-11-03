@@ -15,7 +15,7 @@ import django
 django.setup()
 import pandas as pd
 import numpy as np
-from tagging.models import ProTable
+from apps.dashboard.models import ProTable
 
 from tqdm import tqdm
 from ats_module.TextPreprocessing import *
@@ -45,15 +45,21 @@ df["비고"] = np.nan
 
 nk = Nickonlpy()
 nwt = NicWordTagging()
-protable = ProTable()
 ############################################
 
 def work_func(df):
     for i, n in tqdm(df.iterrows()):
+        protable = ProTable()
         ori_text = str(n['적요'])
         trans_md = str(n['거래구분'])
         ats_kdcd_dtl = str(n['거래유형'])
+        trans_dtime = str(n['거래시간'])
+
         pro_text = ""
+        protable.member_id = userID
+        protable.file_name = file_name
+        protable.new_file_name = new_file_name
+        protable.trans_dtime = trans_dtime
         protable.ori_text = ori_text
         protable.trans_md = trans_md
         protable.ats_kdcd_dtl = ats_kdcd_dtl
@@ -103,10 +109,7 @@ def work_func(df):
 def parallel_dataframe(df, func, num_cores):
     df_split = np.array_split(df, num_cores)
     pool = Pool(num_cores)
-    df = pd.concat(pool.map(func, df_split))
-    pool.close()
-    pool.join()
-    return df
+    return pd.concat(pool.map(func, df_split))
 
 
 if __name__ == '__main__':
