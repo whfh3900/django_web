@@ -19,46 +19,49 @@ def board(request):
                                                                                          'ats_kdcd_dtl', 'ori_text',
                                                                                          'first_tag', 'second_tag')
         data = pd.DataFrame(list(data))
-        data['trans_dtime'] = pd.to_datetime(data['trans_dtime'], format='%Y-%m-%d %H:%M', errors='raise')
-        year = data['trans_dtime'].dt.year.max()
-        data = data[data['trans_dtime'].between('%s-01-01'%year, '%s-12-31'%year)]
-        data['month'] = data['trans_dtime'].dt.month
-        de_data = data[data['trans_md'] == '2'].copy()
-        ex_data = data[data['trans_md'] == '1'].copy()
+        if len(data) == 0:
+            render(request, 'UI-DB-00-00.html', context)
+        else:
+            data['trans_dtime'] = pd.to_datetime(data['trans_dtime'], format='%Y-%m-%d %H:%M', errors='raise')
+            year = data['trans_dtime'].dt.year.max()
+            data = data[data['trans_dtime'].between('%s-01-01'%year, '%s-12-31'%year)]
+            data['month'] = data['trans_dtime'].dt.month
+            de_data = data[data['trans_md'] == '2'].copy()
+            ex_data = data[data['trans_md'] == '1'].copy()
 
-        all_time_groupby = data.groupby('month')['id'].count().add_suffix('월').reset_index()
-        de_time_groupby = de_data.groupby('month')['id'].count().add_suffix('월').reset_index()
-        ex_time_groupby = ex_data.groupby('month')['id'].count().add_suffix('월').reset_index()
+            all_time_groupby = data.groupby('month')['id'].count().add_suffix('월').reset_index()
+            de_time_groupby = de_data.groupby('month')['id'].count().add_suffix('월').reset_index()
+            ex_time_groupby = ex_data.groupby('month')['id'].count().add_suffix('월').reset_index()
 
-        context['all_time_line_labels'] = all_time_groupby['month'].tolist()
-        context['all_time_line_data'] = all_time_groupby['id'].tolist()
-        context['ex_time_line_labels'] = ex_time_groupby['month'].tolist()
-        context['ex_time_line_data'] = ex_time_groupby['id'].tolist()
-        context['de_time_line_labels'] = de_time_groupby['month'].tolist()
-        context['de_time_line_data'] = de_time_groupby['id'].tolist()
+            context['all_time_line_labels'] = all_time_groupby['month'].tolist()
+            context['all_time_line_data'] = all_time_groupby['id'].tolist()
+            context['ex_time_line_labels'] = ex_time_groupby['month'].tolist()
+            context['ex_time_line_data'] = ex_time_groupby['id'].tolist()
+            context['de_time_line_labels'] = de_time_groupby['month'].tolist()
+            context['de_time_line_data'] = de_time_groupby['id'].tolist()
 
-        de_first_tag_groupby = de_data.groupby('first_tag')['id'].count().add_suffix('').reset_index()
-        ex_first_tag_groupby = ex_data.groupby('first_tag')['id'].count().add_suffix('').reset_index()
+            de_first_tag_groupby = de_data.groupby('first_tag')['id'].count().add_suffix('').reset_index()
+            ex_first_tag_groupby = ex_data.groupby('first_tag')['id'].count().add_suffix('').reset_index()
 
-        context['de_first_tag_data'] = de_first_tag_groupby['id'].tolist()
-        context['de_first_tag_labels'] = de_first_tag_groupby['first_tag'].tolist()
-        context['ex_first_tag_data'] = ex_first_tag_groupby['id'].tolist()
-        context['ex_first_tag_labels'] = ex_first_tag_groupby['first_tag'].tolist()
+            context['de_first_tag_data'] = de_first_tag_groupby['id'].tolist()
+            context['de_first_tag_labels'] = de_first_tag_groupby['first_tag'].tolist()
+            context['ex_first_tag_data'] = ex_first_tag_groupby['id'].tolist()
+            context['ex_first_tag_labels'] = ex_first_tag_groupby['first_tag'].tolist()
 
-        context['입금'] = dict()
-        context['출금'] = dict()
-        for i in context['de_first_tag_labels']:
-            temp = de_data[de_data['first_tag'] == i]
-            context['입금'][i] = temp.groupby('second_tag')['id'].count().to_dict()
+            context['입금'] = dict()
+            context['출금'] = dict()
+            for i in context['de_first_tag_labels']:
+                temp = de_data[de_data['first_tag'] == i]
+                context['입금'][i] = temp.groupby('second_tag')['id'].count().to_dict()
 
-        for i in context['ex_first_tag_labels']:
-            temp = ex_data[ex_data['first_tag'] == i]
-            context['출금'][i] = temp.groupby('second_tag')['id'].count().to_dict()
+            for i in context['ex_first_tag_labels']:
+                temp = ex_data[ex_data['first_tag'] == i]
+                context['출금'][i] = temp.groupby('second_tag')['id'].count().to_dict()
 
 
-        # return JsonResponse(data=context, status=200)
-        return render(request, 'UI-DB-00-00.html', context)
-        # return HttpResponse(json.dumps(context, ensure_ascii=False), content_type=u"application/json; charset=utf-8")
+            # return JsonResponse(data=context, status=200)
+            return render(request, 'UI-DB-00-00.html', context)
+            # return HttpResponse(json.dumps(context, ensure_ascii=False), content_type=u"application/json; charset=utf-8")
     else:
         return render(request, 'page-401.html')
 
