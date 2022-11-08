@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
 from .models import AuthUser
@@ -39,7 +39,8 @@ def introduction_download(request):
 @csrf_exempt
 def ats_login(request):
     if request.method == "GET":
-        logout(request)
+        # logout(request)
+        print("GET:", request.user)
         return render(request, "UI-AT-JO-00.html")
 
     elif request.method == "POST":
@@ -53,12 +54,13 @@ def ats_login(request):
                                                                             'data_len', 'pro_result')
             context = {'history_list': history_list, 'history_len': len(history_list)}
             # Redirect to a success page.
+            print("POST:", request.user)
             return render(request, 'UI-AT-DA-00.html', context)
-            # return render(request, 'base.html', context)
 
         else:
             # Return an 'invalid login' error message.
             return render(request, "UI-AT-JO-01.html")
+
 
 @csrf_exempt
 def userinfo(request):

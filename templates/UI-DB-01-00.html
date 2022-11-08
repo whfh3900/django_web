@@ -1,91 +1,89 @@
-<!DOCTYPE html>
 {% extends 'base.html' %}
+
+{% block content %}
 {% load static %}
-<html lang="ko">
-<head>
-</head>
-<body>
-  {% block content %}
-	<div class="row">
-		<table id="data_table_view">
-			<thead>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script src="{% static 'p/js/filelist.js' %}"></script>
+
+<div class="row">
+	<table id="data_table_view">
+		<thead>
+			<tr>
+				<th></th>
+				<th>파일명</th>
+				<th>저장파일명</th>
+				<th>시작시간</th>
+				<th>종료시간</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			{% for i in dashboard_data_list %}
 				<tr>
-					<th></th>
-					<th>파일명</th>
-					<th>저장파일명</th>
-					<th>시작시간</th>
-					<th>종료시간</th>
+					<td>{{i.id}}</td>
+					<td>{{i.file_name}}</td>
+					<td>{{i.new_file_name}}</td>
+					<td>{{i.start_dtime}}</td>
+					<td>{{i.end_dtime}}</td>
 				</tr>
-			</thead>
-
-			<tbody>
-				{% for i in dashboard_data_list %}
-					<tr>
-						<td>{{i.id}}</td>
-						<td>{{i.file_name}}</td>
-						<td>{{i.new_file_name}}</td>
-						<td>{{i.start_dtime}}</td>
-						<td>{{i.end_dtime}}</td>
-					</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-
-		<form id="search" method="POST" action="{% url 'filelist' %}" enctype="multipart/form-data">
-			<span id="view_file_name"></span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<input type="hidden" name="new_file_name" id="new_file_name"/>
-			<input type="submit" id="data_search" value="검색"/>
-		</form>
-
-		<table id="pro_table_view">
-			<thead>
-				<tr>
-					<th></th>
-					<th>파일명</th>
-					<th>거래시간</th>
-					<th>거래구분</th>
-					<th>거래유형</th>
-					<th>적요</th>
-					<th>대분류</th>
-					<th>중분류</th>
-				</tr>
-			</thead>
-
-			<tbody>
-				{% for i in dashboard_pro_list %}
-					<tr>
-						<td>{{i.id}}</td>
-						<td>{{i.file_name}}</td>
-						<td>{{i.trans_dtime}}</td>
-						<td>{{i.trans_md}}</td>
-						<td>{{i.ats_kdcd_dtl}}</td>
-						<td>{{i.ori_text}}</td>
-						<td>{{i.first_tag}}</td>
-						<td>{{i.second_tag}}</td>
-					</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-
-		<form id="modify" method="POST" action="{% url 'modify' %}" enctype="multipart/form-data">
-			<span>대분류: </span> <span id="first_tag"></span><br>
-			<input type="text" id="mod_first_tag" name="mod_first_tag"><br>
-			<span>중분류: </span> <span id="second_tag"></span><br>
-			<input type="text" id="mod_second_tag" name="mod_second_tag"><br>
-			<input type="hidden" name="modData" id="modData"/>
-			<input type="submit" id="data_modify" value="수정" disabled/>
-		</form>
-		{% if messages %}
-			{% for message in messages %}
-				<div class="alert {{ message.tags }} alert-auto-dismissible alert-dismissible notification-container text-center" role="alert">
-					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-					{{ message }}
-				</div>
 			{% endfor %}
-		{% endif %}
-	</div>
-  {% endblock %}
-</body>
-</html>
+		</tbody>
+	</table>
+
+	<form id="search" method="POST" action="{% url 'filelist' %}" enctype="multipart/form-data">
+		<span id="view_file_name"></span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<input type="hidden" name="new_file_name" id="new_file_name"/>
+		<input type="submit" id="data_search" value="검색"/>
+	</form>
+
+	<table id="pro_table_view">
+		<thead>
+			<tr>
+				<th></th>
+				<th>파일명</th>
+				<th>거래시간</th>
+				<th>거래구분</th>
+				<th>거래유형</th>
+				<th>적요</th>
+				<th>대분류</th>
+				<th>중분류</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			{% for i in dashboard_pro_list %}
+				<tr>
+					<td>{{i.id}}</td>
+					<td>{{i.file_name}}</td>
+					<td>{{i.trans_dtime}}</td>
+					<td>{{i.trans_md}}</td>
+					<td>{{i.ats_kdcd_dtl}}</td>
+					<td>{{i.ori_text}}</td>
+					<td>{{i.first_tag}}</td>
+					<td>{{i.second_tag}}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	<form id="modify" method="POST" action="{% url 'modify' %}" enctype="multipart/form-data">
+		<span>대분류: </span> <span id="first_tag"></span><br>
+		<input type="text" id="mod_first_tag" name="mod_first_tag"><br>
+		<span>중분류: </span> <span id="second_tag"></span><br>
+		<input type="text" id="mod_second_tag" name="mod_second_tag"><br>
+		<input type="hidden" name="modData" id="modData"/>
+		<input type="submit" id="data_modify" value="수정" disabled/>
+	</form>
+	{% if messages %}
+		{% for message in messages %}
+			<div class="alert {{ message.tags }} alert-auto-dismissible alert-dismissible notification-container text-center" role="alert">
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				{{ message }}
+			</div>
+		{% endfor %}
+	{% endif %}
+</div>
+{% endblock %}
+

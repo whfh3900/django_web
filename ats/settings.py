@@ -49,9 +49,6 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    # 'apps.authentication.apps.AuthenticationConfig',
-    # 'apps.tagging.apps.TaggingConfig',
-    # 'apps.dashboard.apps.DashboardConfig',
     'apps.authentication',
     'apps.tagging',
     'apps.dashboard',
@@ -62,6 +59,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'chartjs',
 ]
 
 MIDDLEWARE = [

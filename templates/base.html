@@ -13,9 +13,7 @@
    	<link href="{% static 'p/css/ats.css' %}" rel="stylesheet">
 <!--	<script src="{% static 'p/js/jquery-3.1.0.min.js' %}"></script>-->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-	<script src="{% static 'p/js/nic_ui.js' %}"></script>
-	<script src="{% static 'p/js/ajax.js' %}"></script>
-	<script src="{% static 'p/js/jquery.event.drag-1.7.1.min.js' %}"></script>
+
 
 	<!-- base head -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -24,14 +22,11 @@
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <!--    <link href="{% static 'p/css/base.css' %}" rel="stylesheet" >-->
 
-	<!-- filelist head -->
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-	<script src="{% static 'p/js/filelist.js' %}"></script>
+
 
 
 	<!-- board head -->
-	<script src="{% static 'p/js/board.js' %}"></script>
-	<script src="{% static 'p/js/chartjs.min.js' %}"></script>
+
 
 </head>
 <body>
@@ -45,12 +40,13 @@
 			<li><a href="{% url 'userinfo' %}" class="item"><div>사용자정보</div></a></li>
 			<li><a href="{% url 'settings' %}" class="item"><div>설정</div></a></li>
 		</ul>
+		{% block content %}
+		<!-- 여기에 app 화면 -->
+		{% endblock %}
 	</div>
 
 
-	{% block content %}
-	<!-- 여기에 app 화면 -->
-	{% endblock %}
+
 
 	<div class="footer_w">
 		<p>ⓒ NIC company</p>
