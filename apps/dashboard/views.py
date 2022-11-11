@@ -20,7 +20,7 @@ def board(request):
                                                                                          'first_tag', 'second_tag')
         data = pd.DataFrame(list(data))
         if len(data) == 0:
-            render(request, 'UI-DB-00-00.html', context)
+            render(request, 'page-404.html')
         else:
             data['trans_dtime'] = pd.to_datetime(data['trans_dtime'], format='%Y-%m-%d %H:%M', errors='raise')
             year = data['trans_dtime'].dt.year.max()
