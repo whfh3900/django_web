@@ -7,60 +7,212 @@
 
 
 <!--    타임라인 그래프-->
-    <div id="time_line_div" style="width: 100%;">
-    <!--    <canvas id="population-chart" data-url="{% url 'board' %}"></canvas>-->
-        <div id="options_radio" data-toggle="buttons">
-            <label id="time_line_view_all"><input type="radio" name="time_line_options" checked>전체</label>
-            <label id="time_line_view_de"><input type="radio"  name="time_line_options">입금</label>
-            <label id="time_line_view_ex"><input type="radio"  name="time_line_options">출금</label>
+<div class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-chart">
+                <div class="card-header ">
+                    <div class="row">
+                        <div class="col-sm-6 text-left">
+                            <h5 class="card-category"></h5>
+                            <h2 class="card-title">총 거래량</h2>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="btn-group btn-group-toggle float-right" id="options_radio" data-toggle="buttons">
+                                <label class="btn btn-sm btn-primary btn-simple active" id="time_line_view_all">
+                                    <input type="radio" name="time_line_options" checked>
+                                    <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">전체</span>
+                                    <span class="d-block d-sm-none">
+                    <i class="tim-icons icon-single-02"></i>
+                </span>
+                                </label>
+                                <label class="btn btn-sm btn-primary btn-simple" id="time_line_view_de">
+                                    <input type="radio" class="d-none d-sm-none" name="time_line_options">
+                                    <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">입금</span>
+                                    <span class="d-block d-sm-none">
+                    <i class="tim-icons icon-gift-2"></i>
+                </span>
+                                </label>
+                                <label class="btn btn-sm btn-primary btn-simple" id="time_line_view_ex">
+                                    <input type="radio" class="d-none" name="time_line_options">
+                                    <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">지급</span>
+                                    <span class="d-block d-sm-none">
+                    <i class="tim-icons icon-tap-02"></i>
+                </span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area-top">
+                        <canvas id="time_line"></canvas>
+                    </div>
+                </div>
+            </div>
         </div>
-        <canvas id="time_line" width="2000" height="500"></canvas>
     </div>
-<!---->
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card card-chart">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="tim-icons icon-bell-55 text-primary"></i>입금 거래량</h3>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="de_first_tag"></canvas>
+                    </div>
+                </div>
+                <div style="margin-bottom:20px; margin-right:10px;">
+                    <div class="float-right" id="de_choice_radio" data-toggle="buttons">
+                                {% for i in de_first_tag_labels %}
+                                    {% if forloop.first %}
+                                        <label class="btn btn-sm btn-primary btn-simple active" id="de_first_tag_radio"><input type="radio" name="de_first_tag_choice" value="{{i}}" checked>{{i}}</label>
+                                    {% else %}
+                                        <label class="btn btn-sm btn-primary btn-simple" id="de_first_tag_radio"><input type="radio" name="de_first_tag_choice" value="{{i}}">{{i}}</label>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area-bottom">
 
+                        <canvas id="de_second_tag"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card card-chart">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="tim-icons icon-bell-55 text-primary"></i>출금 거래량</h3>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="ex_first_tag"></canvas>
+                    </div>
+                </div>
+                <div style="margin-bottom:20px; margin-right:10px;">
+                    <div id="ex_choice_radio" data-toggle="buttons">
+                        {% for i in ex_first_tag_labels %}
+                            {% if forloop.first %}
+                                <label id="ex_first_tag_radio"><input type="radio" name="ex_first_tag_choice" value="{{i}}" checked>{{i}}</label>
+                            {% else %}
+                                <label id="ex_first_tag_radio"><input type="radio" name="ex_first_tag_choice" value="{{i}}">{{i}}</label>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area-bottom">
+
+                        <canvas id="ex_second_tag"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
 <!--    입출금 대분류 파이 그래프-->
-    <div id="first_tag_div" style="width: 50%;">
-        <canvas id="de_first_tag" width="1000" height="500"></canvas>
-        <canvas id="ex_first_tag" width="1000" height="500"></canvas>
-    </div>
+
 <!---->
-
-<!--    입출금 중분류 막대 그래프-->
-    <div id="second_tag_div" style="width: 50%;">
-
-
-<!--        입금 중분류 막대 그래프-->
-        <div id="de_choice_radio" data-toggle="buttons">
-            {% for i in de_first_tag_labels %}
-                {% if forloop.first %}
-                    <label id="de_first_tag_radio"><input type="radio" name="de_first_tag_choice" value="{{i}}" checked>{{i}}</label>
-                {% else %}
-                    <label id="de_first_tag_radio"><input type="radio" name="de_first_tag_choice" value="{{i}}">{{i}}</label>
-
-                {% endif %}
-            {% endfor %}
-        </div>
-        <canvas id="de_second_tag" width="1000" height="500"></canvas>
-<!---->
-
-
-<!--        출금 중분류 막대 그래프-->
-        <div id="ex_choice_radio" data-toggle="buttons">
-            {% for i in ex_first_tag_labels %}
-                {% if forloop.first %}
-                    <label id="ex_first_tag_radio"><input type="radio" name="ex_first_tag_choice" value="{{i}}" checked>{{i}}</label>
-                {% else %}
-                    <label id="ex_first_tag_radio"><input type="radio" name="ex_first_tag_choice" value="{{i}}">{{i}}</label>
-                {% endif %}
-            {% endfor %}
-        </div>
-        <canvas id="ex_second_tag" width="1000" height="500"></canvas>
-<!--        -->
-
     </div>
+    </div>
+
+</div>
 <!---->
 
     <script>
+        gradientChartOptionsConfigurationWithTooltipPurple = {
+      maintainAspectRatio: false,
+      legend: {
+        display: false
+      },
+
+      tooltips: {
+        backgroundColor: '#f5f5f5',
+        titleFontColor: '#333',
+        bodyFontColor: '#666',
+        bodySpacing: 4,
+        xPadding: 12,
+        mode: "nearest",
+        intersect: 0,
+        position: "nearest"
+      },
+      responsive: true,
+      scales: {
+        yAxes: [{
+          barPercentage: 1.6,
+          gridLines: {
+            drawBorder: false,
+            color: 'rgba(29,140,248,0.0)',
+            zeroLineColor: "transparent",
+          },
+          ticks: {
+
+            padding: 20,
+            fontColor: "#9a9a9a"
+          }
+        }],
+
+        xAxes: [{
+          barPercentage: 1.6,
+          gridLines: {
+            drawBorder: false,
+            color: 'rgba(225,78,202,0.1)',
+            zeroLineColor: "transparent",
+          },
+          ticks: {
+            padding: 20,
+            fontColor: "#9a9a9a"
+          }
+        }]
+      }
+    };
+    gradientBarChartConfiguration = {
+      maintainAspectRatio: false,
+      legend: {
+        display: false
+      },
+
+      tooltips: {
+        backgroundColor: '#f5f5f5',
+        titleFontColor: '#333',
+        bodyFontColor: '#666',
+        bodySpacing: 4,
+        xPadding: 12,
+        mode: "nearest",
+        intersect: 0,
+        position: "nearest"
+      },
+      responsive: true,
+      scales: {
+        yAxes: [{
+
+          gridLines: {
+            drawBorder: false,
+            color: 'rgba(29,140,248,0.1)',
+            zeroLineColor: "transparent",
+          },
+          ticks: {
+
+            padding: 20,
+            fontColor: "#9e9e9e"
+          }
+        }],
+
+        xAxes: [{
+
+          gridLines: {
+            drawBorder: false,
+            color: 'rgba(29,140,248,0.1)',
+            zeroLineColor: "transparent",
+          },
+          ticks: {
+            padding: 20,
+            fontColor: "#9e9e9e"
+          }
+        }]
+      }
+    };
 <!--        타임라인 그래프-->
         var time_line_ctx = document.getElementById('time_line').getContext('2d');
         var all_time_line_data = {{all_time_line_data|safe}};
@@ -87,9 +239,7 @@
             }],
             labels: all_time_line_labels
           },
-          options: {
-            responsive: true
-          }
+          options: gradientChartOptionsConfigurationWithTooltipPurple
         };
 
         var time_line_graph = new Chart(time_line_ctx, time_line_config);
@@ -145,7 +295,9 @@
             labels: de_pie_labels
           },
           options: {
-            responsive: true
+            legend:{display:false},
+            responsive: true,
+            maintainAspectRatio: false,
           }
         };
 
@@ -221,9 +373,7 @@
             }],
             labels: de_labels
           },
-          options: {
-            responsive: true
-          }
+          options: gradientBarChartConfiguration
         };
 
         var de_bar_graph = new Chart(de_bar_ctx, de_bar_config);

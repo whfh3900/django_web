@@ -13,6 +13,9 @@
    	<link href="{% static 'p/css/ats.css' %}" rel="stylesheet">
 <!--	<script src="{% static 'p/js/jquery-3.1.0.min.js' %}"></script>-->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="{% static 'p/js/nic_ui.js' %}"></script>
+	<script src="{% static 'p/js/ajax.js' %}"></script>
+	<script src="{% static 'p/js/jquery.event.drag-1.7.1.min.js' %}"></script>
 
 
 	<!-- base head -->
@@ -22,17 +25,36 @@
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <!--    <link href="{% static 'p/css/base.css' %}" rel="stylesheet" >-->
 
+	<!-- filelist head -->
 
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<script src="{% static 'p/js/filelist.js' %}"></script>
 
 
 	<!-- board head -->
+	     <script src="{% static 'p/js/jquery-3.1.0.min.js' %}"></script>
+    <script src="{% static 'p/js/chartjs.min.js' %}"></script>
+
+    <script src="{% static 'p/js/demo.js' %}"></script>
+
 
 
 </head>
-<body>
-	<div class="menu">
-		<label for="expand-menu"><div>메뉴</div></label>
-		<ul>
+ <style>
+    a { text-decoration: none; color: black; }
+    a:visited { text-decoration: none; }
+    a:hover { text-decoration: none; }
+    a:focus { text-decoration: none; }
+    a:hover, a:active { text-decoration: none; }
+</style>
+<body class="white-content">
+	<div class="sidebar-wrapper">
+		<div class="logo">
+			<a class="logo-normal"></a>
+
+		</div>
+
+		<ul class="nav">
 			<li><a href="{% url 'home' %}" class="item"><div>HOME</div></a></li>
 			<li><a href="{% url 'tagging' %}" class="item"><div>태깅</div></a></li>
 			<li><a href="{% url 'board' %}" class="item"><div>대시보드</div></a></li>
@@ -40,13 +62,10 @@
 			<li><a href="{% url 'userinfo' %}" class="item"><div>사용자정보</div></a></li>
 			<li><a href="{% url 'settings' %}" class="item"><div>설정</div></a></li>
 		</ul>
-		{% block content %}
-		<!-- 여기에 app 화면 -->
-		{% endblock %}
 	</div>
 
 
-
+	{% block content %}{% endblock content %}
 
 	<div class="footer_w">
 		<p>ⓒ NIC company</p>
@@ -54,4 +73,6 @@
 	</div>
 </body>
 </html>
+	 {% block javascripts %}
 
+	{% endblock javascripts %}

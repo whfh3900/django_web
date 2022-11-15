@@ -4,9 +4,9 @@
 {% load static %}
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <script src="{% static 'p/js/filelist.js' %}"></script>
-
+<div class="content">
 <div class="row">
-	<table id="data_table_view">
+	<table class="data_table_view" id="data_table_view">
 		<thead>
 			<tr>
 				<th></th>
@@ -29,14 +29,19 @@
 			{% endfor %}
 		</tbody>
 	</table>
-
+	<div class="data_table_view_bottom">
 	<form id="search" method="POST" action="{% url 'filelist' %}" enctype="multipart/form-data">
-		<span id="view_file_name"></span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<div class="file_box1">
+			<span id="view_file_name"></span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		</div>
+		<div class="file_box2">
 		<input type="hidden" name="new_file_name" id="new_file_name"/>
-		<input type="submit" id="data_search" value="검색"/>
+		<input class="btn-gradient" type="submit" id="data_search" value="검색"/>
+		</div>
 	</form>
-
-	<table id="pro_table_view">
+	</div>
+	<div style="width:100%; max-height:500px; overflow:auto;">
+	<table clas="pro_table_view" id="pro_table_view">
 		<thead>
 			<tr>
 				<th></th>
@@ -65,15 +70,21 @@
 			{% endfor %}
 		</tbody>
 	</table>
-
+	</div>
+	<div class="pro_table_view_bottom">
 	<form id="modify" method="POST" action="{% url 'modify' %}" enctype="multipart/form-data">
+		<div class="file_box3">
 		<span>대분류: </span> <span id="first_tag"></span><br>
-		<input type="text" id="mod_first_tag" name="mod_first_tag"><br>
+		<input class="cate_blank1" type="text" id="mod_first_tag" name="mod_first_tag"><br>
+		</div>
+		<div class="file_box3">
 		<span>중분류: </span> <span id="second_tag"></span><br>
-		<input type="text" id="mod_second_tag" name="mod_second_tag"><br>
+		<input class="cate_blank2" type="text" id="mod_second_tag" name="mod_second_tag"><br>
+		</div>
 		<input type="hidden" name="modData" id="modData"/>
-		<input type="submit" id="data_modify" value="수정" disabled/>
+		<input class="btn-gradient" type="submit" id="data_modify" value="수정" disabled/>
 	</form>
+		</div>
 	{% if messages %}
 		{% for message in messages %}
 			<div class="alert {{ message.tags }} alert-auto-dismissible alert-dismissible notification-container text-center" role="alert">
@@ -85,5 +96,6 @@
 		{% endfor %}
 	{% endif %}
 </div>
+	</div>
 {% endblock %}
 

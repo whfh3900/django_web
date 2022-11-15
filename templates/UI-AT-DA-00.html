@@ -1,113 +1,125 @@
+<!doctype html>
 {% extends 'base.html' %}
-
-{% block content %}
 {% load static %}
-<script src="{% static 'p/js/nic_ui.js' %}"></script>
-<script src="{% static 'p/js/ajax.js' %}"></script>
-<script src="{% static 'p/js/jquery.event.drag-1.7.1.min.js' %}"></script>
 
-<div id="wrap" >
-<!-- 헤더 -->
-<div class="header">
-	<div class="h_inner">
-		<span href="#" class="logo_ats"></span>
-		<button type="button" class="history_open" onclick="popOpen()">태깅이력보기</button>
-		<form id="logout" method="GET" action="{% url 'ats_login' %}">
-			<input type="submit" class="logout" value="로그아웃"/>
-		</form>
-		<a type="button" class="btn_X" href="{% url 'home' %}"></a>
+<!--<script src="{% static 'p/js/jquery.event.drag-1.7.1.min.js' %}"></script>-->
+<!--<script src="{% static 'p/js/ajax.js' %}"></script>-->
+<!--<script src="{% static 'p/js/nic_ui.js' %}"></script>-->
+
+<html lang="ko">
+
+<head>
+</head>
+ <body>
+  {% block content %}
+  <div class="content">
+	<!-- 헤더 -->
+	  <div class="tag-box">
+	<div class="header">
+		<div class="h_inner">
+			<span href="#" class="logo_ats"></span>
+			<button type="button" class="history_open" onclick="popOpen()">태깅이력보기</button>
+			<form id="logout" method="GET" action="{% url 'ats_login' %}">
+				<input type="submit" class="logout" value="로그아웃"/>
+			</form>
+			<a type="button" class="btn_X" href="{% url 'home' %}"></a>
+		</div>
+
 	</div>
-
-</div>
-<!--// 헤더 -->
+	<!--// 헤더 -->
 
 
-<!-- 이력 팝 -->
-<div class="history_l">
-	<span class="title_pop">데이터 처리 이력 <p>파일을 클릭하시면 데이터를 다시 다운로드 할 수 있습니다.</p></span>
-	<button type="button" class="btn_Close" onclick="popClose()">
-		<span class="ir">메뉴닫힘</span>
-	</button>
-	<div class="history_list">
-		<ul>
-			<li>태깅데이터</li>
+	<!-- 이력 팝 -->
+	<div class="history_l">
+		<span class="title_pop">데이터 처리 이력 <p>파일을 클릭하시면 데이터를 다시 다운로드 할 수 있습니다.</p></span>
+		<button type="button" class="btn_Close" onclick="popClose()">
+			<span class="ir">메뉴닫힘</span>
+		</button>
+		<div class="history_list">
+			<ul>
+				<li>태깅데이터</li>
 <!--				<li>시작시간</li>-->
 <!--				<li>종료시간</li>-->
-			<li>처리시간</li>
-			<li>처리건수</li>
-			<li>결과</li>
-		</ul>
+				<li>처리시간</li>
+				<li>처리건수</li>
+				<li>결과</li>
+			</ul>
 
-		{% for i in history_list %}
-		<ul>
-			<li>
-				<form id="history" method="POST" action="{% url 'history_download' %}" enctype="multipart/form-data">
-					{% csrf_token %}
-					{% if i.pro_result == '진행중' %}
-						<input type="submit" class= "ing" name="history_file_name" id="history_file_name" value="{{i.new_file_name}}" disabled/>
-					{% else %}
-						<input type="submit" name="history_file_name" id="history_file_name" value="{{i.new_file_name}}"/>
-					{% endif %}
-				</form>
+			{% for i in history_list %}
+			<ul>
+				<li>
+					<form id="history" method="POST" action="{% url 'history_download' %}" enctype="multipart/form-data">
+						{% csrf_token %}
+						{% if i.pro_result == '진행중' %}
+							<input type="submit" class= "ing" name="history_file_name" id="history_file_name" value="{{i.new_file_name}}" disabled/>
+						{% else %}
+							<input type="submit" name="history_file_name" id="history_file_name" value="{{i.new_file_name}}"/>
+						{% endif %}
+					</form>
 
-			</li>
+				</li>
 <!--				<li>{{i.start_dtime}}</li>-->
 <!--				<li>{{i.end_dtime}}</li>-->
-			<li>{{i.start_dtime}}</li>
-			<li>{{i.data_len}}</li>
-			<li>{{i.pro_result}}</li>
-		</ul>
-		{% endfor %}
-	</div>
-</div>
-
-<!-- 태깅중  -->
-<div class="tagging">
-	<button type="button" class="btn_Close" onclick="popClose2()"></button>
-	<p></p>
-	<span>카테고리 태깅중 입니다.
-	태깅이 완료될 때 까지 현재 창을 유지해 주세요.</span>
-</div>
-<i class="modal"></i>
- <!--// 이력 팝업 -->
-
-<!-- 컨텐츠 -->
-<div class="Section_02">
-	<div class="cont_area">
-		<span class="txt_cGrey">거래구분(code)/거래유형(text)/적요(text)가 포함된 데이터를 업로드 하세요.
-		파일 인코딩은 utf-8을 사용하세요.
-		<b>처리 가능 데이터는 최대 100만 건</b> 입니다. </span>
-
-		<!-- v 1.7.1 -->
-		<section id="data_file">
-			<form id="tagging" method="POST" onsubmit="return false;" enctype="multipart/form-data">
-				{% csrf_token %}
-				<div class="file_box">
-					<input class="btn_uplode btn-file d-none" type="file" name="testFile" id="testFile"/>
-					<span id="testFileNm" class="file_upload">여기에 csv 파일을 놓거나 '+' 버튼을 클릭하세요</span>
-					<div class="btn_l"></div>
-				</div>
-				<div id="tag_box">
-					<input type="submit" id="tag_btn" class="btn_01 disable" value="카테고리 태깅 시작" disabled />
-				</div>
-			</form>
-
-			<!-- 다운로드시 보이는 버튼-->
-			<form id="download" method="POST" action="{% url 'complete_download' %}" enctype="multipart/form-data">
-				<div id="download_box" style="display:none">
-					<input type="hidden" name="new_file_name" id="new_file_name"/>
-					<input type="submit" id="download_btn" class="btn_01" value="태깅파일 다운로드"/>
-				</div>
-			</form>
-		</section>
-
-		<!-- 데이터 예시 -->
-		<div class="data_ex">
-			<span>* 데이터 형식 예시입니다. (거래구분: 01- 지급, 02-입금)</span>
-			<div class="table_ex"></div>
+				<li>{{i.start_dtime}}</li>
+				<li>{{i.data_len}}</li>
+				<li>{{i.pro_result}}</li>
+			</ul>
+			{% endfor %}
 		</div>
 	</div>
-</div>
-</div>
-{% endblock %}
 
+
+
+	<!-- 태깅중  -->
+	<div class="tagging">
+		<button type="button" class="btn_Close" onclick="popClose2()"></button>
+		<p></p>
+		<span>카테고리 태깅중 입니다.
+		태깅이 완료될 때 까지 현재 창을 유지해 주세요.</span>
+	</div>
+	<i class="modal"></i>
+	 <!--// 이력 팝업 -->
+
+
+	<!-- 컨텐츠 -->
+	<div class="Section_02">
+		<div class="cont_area">
+			<span class="txt_cGrey">거래구분(code)/거래유형(text)/적요(text)가 포함된 데이터를 업로드 하세요.
+			파일 인코딩은 utf-8을 사용하세요.
+			<b>처리 가능 데이터는 최대 100만 건</b> 입니다. </span>
+
+			<!-- v 1.7.1 -->
+			<section id="data_file">
+				<form id="tagging" method="POST" onsubmit="return false;" enctype="multipart/form-data">
+					{% csrf_token %}
+					<div class="file_box">
+						<input class="btn_uplode btn-file d-none" type="file" name="testFile" id="testFile"/>
+						<span id="testFileNm" class="file_upload">여기에 csv 파일을 놓거나 '+' 버튼을 클릭하세요</span>
+						<div class="btn_l"></div>
+					</div>
+					<div id="tag_box">
+						<input type="submit" id="tag_btn" class="btn_01 disable" value="카테고리 태깅 시작" disabled />
+					</div>
+				</form>
+
+				<!-- 다운로드시 보이는 버튼-->
+				<form id="download" method="POST" action="{% url 'complete_download' %}" enctype="multipart/form-data">
+					<div id="download_box" style="display:none">
+						<input type="hidden" name="new_file_name" id="new_file_name"/>
+						<input type="submit" id="download_btn" class="btn_01" value="태깅파일 다운로드"/>
+					</div>
+				</form>
+			</section>
+
+
+			<!-- 데이터 예시 -->
+			<div class="data_ex">
+				<span>* 데이터 형식 예시입니다. (거래구분: 01- 지급, 02-입금)</span>
+				<div class="table_ex"></div>
+			</div>
+		</div>
+	</div>
+  </div></div>
+  {% endblock content %}
+ </body>
+</html>
