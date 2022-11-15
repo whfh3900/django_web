@@ -2,12 +2,12 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from .models import DataTable
+from apps.dashboard.models import ProTable
 from django.http import JsonResponse, FileResponse
 from django.core.files.storage import FileSystemStorage, default_storage
 # from django.contrib import messages
 
 # 이전버젼 ############################
-# import pandas as pd
 # from ats_module.TextPreprocessing import *
 # from ats_module.TextTagging import *
 # from tqdm import tqdm
@@ -16,7 +16,7 @@ import sys
 import os
 import datetime
 import platform
-#
+import pandas as pd
 
 @csrf_exempt
 def tagging(request):
@@ -237,21 +237,37 @@ def complete_download(request):
         return render(request, 'page-401.html')
 
     elif request.method == "POST":
-        new_file_name = request.POST["new_file_name"]
+        if request.user.is_authenticated:
+            userID = str(request.user)
+            new_file_name = request.POST["new_file_name"]
+            data = ProTable.objects.filter(member_id=userID, new_file_name=new_file_name).values('trans_dtime', 'trans_md',
+                                                                                                 'ats_kdcd_dtl', 'ori_text',
+                                                                                                 'first_tag', 'second_tag',
+                                                                                                 'note')
 
-        if platform.system() == 'Windows':
-            file_path = os.path.dirname('./save/%s' % new_file_name)
-            file_name = os.path.basename('./save/%s' % new_file_name)
-        elif platform.system() == 'Linux':
-            file_path = os.path.dirname('/home/manager/django_web/save/%s' % new_file_name)
-            file_name = os.path.basename('/home/manager/django_web/save/%s' % new_file_name)
+            data = pd.DataFrame(list(data))
+            data.columns = ['거래시간', '거래구분', '거래유형', '적요', '대분류', '중분류', '비고']
+            if platform.system() == 'Windows':
+                save_path = './save/%s' % new_file_name
+            elif platform.system() == 'Linux':
+                save_path = '/home/manager/django_web/save/%s' % new_file_name
+            else:
+                save_path = '/home/manager/django_web/save/%s' % new_file_name
 
-        fs = FileSystemStorage(file_path)
+            data.to_csv(save_path, encoding='utf-8-sig')
+            file_path = os.path.dirname(save_path)
+            file_name = os.path.basename(save_path)
+            fs = FileSystemStorage(file_path)
+            response = FileResponse(fs.open(file_name, 'rb'),
+                                    content_type='application/vnd.ms-excel')
+            response['Content-Disposition'] = 'attachment; filename="{}"'.format(new_file_name)
 
-        response = FileResponse(fs.open(file_name, 'rb'),
-                                content_type='application/vnd.ms-excel')
-        response['Content-Disposition'] = 'attachment; filename="{}"'.format(new_file_name)
-        return response
+            # # 작업파일 삭제
+            # if os.path.exists(save_path):
+            #     os.remove(save_path)
+            return response
+        else:
+            return render(request, 'page-401.html')
 
 
 @csrf_exempt
@@ -260,19 +276,35 @@ def history_download(request):
         return render(request, 'page-401.html')
 
     elif request.method == "POST":
-        history_file_name = request.POST["history_file_name"]
+        if request.user.is_authenticated:
+            userID = str(request.user)
+            history_file_name = request.POST["history_file_name"]
+            data = ProTable.objects.filter(member_id=userID, new_file_name=history_file_name).values('trans_dtime', 'trans_md',
+                                                                                                     'ats_kdcd_dtl', 'ori_text',
+                                                                                                     'first_tag', 'second_tag',
+                                                                                                     'note')
 
-        if platform.system() == 'Windows':
-            file_path = os.path.dirname('./save/%s' % history_file_name)
-            file_name = os.path.basename('./save/%s' % history_file_name)
-        elif platform.system() == 'Linux':
-            file_path = os.path.dirname('/home/manager/django_web/save/%s' % history_file_name)
-            file_name = os.path.basename('/home/manager/django_web/save/%s' % history_file_name)
+            data = pd.DataFrame(list(data))
+            data.columns = ['거래시간', '거래구분', '거래유형', '적요', '대분류', '중분류', '비고']
+            if platform.system() == 'Windows':
+                save_path = './save/%s' % history_file_name
+            elif platform.system() == 'Linux':
+                save_path = '/home/manager/django_web/save/%s' % history_file_name
+            else:
+                save_path = '/home/manager/django_web/save/%s' % history_file_name
 
-        fs = FileSystemStorage(file_path)
-        response = FileResponse(fs.open(file_name, 'rb'),
-                                content_type='application/vnd.ms-excel')
-        response['Content-Disposition'] = 'attachment; filename="{}"'.format(history_file_name)
-        return response
+            data.to_csv(save_path, encoding='utf-8-sig')
+            file_path = os.path.dirname(save_path)
+            file_name = os.path.basename(save_path)
+            fs = FileSystemStorage(file_path)
+            response = FileResponse(fs.open(file_name, 'rb'),
+                                    content_type='application/vnd.ms-excel')
+            response['Content-Disposition'] = 'attachment; filename="{}"'.format(history_file_name)
 
+            # # 작업파일 삭제
+            # if os.path.exists(save_path):
+            #     os.remove(save_path)
+            return response
+        else:
+            return render(request, 'page-401.html')
 

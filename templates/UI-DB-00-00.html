@@ -10,6 +10,18 @@
 <!--    타임라인 그래프-->
 <div class="content">
     <div class="row">
+        <div>
+            <form id="board_select" method="POST" action="{% url 'board' %}" enctype="multipart/form-data">
+                <select name="select_file">
+                    <option value="none">============= 선택 =============</option>
+                    {% for i in file_list %}
+                        <option value="{{i.new_file_name}}">{{i.new_file_name}}</option>
+                    {% endfor %}
+                </select>
+                <input type="submit" name="select_file_name" id="select_file_name" value="show"/>
+            </form>
+        </div>
+
         <div class="col-12">
             <div class="card card-chart">
                 <div class="card-header ">
@@ -24,22 +36,22 @@
                                     <input type="radio" name="time_line_options" checked>
                                     <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">전체</span>
                                     <span class="d-block d-sm-none">
-                    <i class="tim-icons icon-single-02"></i>
-                </span>
+                                        <i class="tim-icons icon-single-02"></i>
+                                    </span>
                                 </label>
                                 <label class="btn btn-sm btn-primary btn-simple" id="time_line_view_de">
                                     <input type="radio" class="d-none d-sm-none" name="time_line_options">
                                     <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">입금</span>
                                     <span class="d-block d-sm-none">
-                    <i class="tim-icons icon-gift-2"></i>
-                </span>
+                                        <i class="tim-icons icon-gift-2"></i>
+                                    </span>
                                 </label>
                                 <label class="btn btn-sm btn-primary btn-simple" id="time_line_view_ex">
                                     <input type="radio" class="d-none" name="time_line_options">
                                     <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">지급</span>
                                     <span class="d-block d-sm-none">
-                    <i class="tim-icons icon-tap-02"></i>
-                </span>
+                                        <i class="tim-icons icon-tap-02"></i>
+                                    </span>
                                 </label>
                             </div>
                         </div>
@@ -66,14 +78,14 @@
                 </div>
                 <div style="margin-bottom:20px; margin-right:10px;">
                     <div class="float-right" id="de_choice_radio" data-toggle="buttons">
-                                {% for i in de_first_tag_labels %}
-                                    {% if forloop.first %}
-                                        <label class="btn btn-sm btn-primary btn-simple active" id="de_first_tag_radio"><input type="radio" name="de_first_tag_choice" value="{{i}}" checked>{{i}}</label>
-                                    {% else %}
-                                        <label class="btn btn-sm btn-primary btn-simple" id="de_first_tag_radio"><input type="radio" name="de_first_tag_choice" value="{{i}}">{{i}}</label>
-                                    {% endif %}
-                                {% endfor %}
-                            </div>
+                        {% for i in de_first_tag_labels %}
+                            {% if forloop.first %}
+                                <label class="btn btn-sm btn-primary btn-simple active" id="de_first_tag_radio"><input type="radio" name="de_first_tag_choice" value="{{i}}" checked>{{i}}</label>
+                            {% else %}
+                                <label class="btn btn-sm btn-primary btn-simple" id="de_first_tag_radio"><input type="radio" name="de_first_tag_choice" value="{{i}}">{{i}}</label>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="chart-area-bottom">
@@ -97,16 +109,15 @@
                     <div id="ex_choice_radio" data-toggle="buttons">
                         {% for i in ex_first_tag_labels %}
                             {% if forloop.first %}
-                                <label id="ex_first_tag_radio"><input type="radio" name="ex_first_tag_choice" value="{{i}}" checked>{{i}}</label>
+                                <label class="btn btn-sm btn-primary btn-simple active" id="ex_first_tag_radio"><input type="radio" name="ex_first_tag_choice" value="{{i}}" checked>{{i}}</label>
                             {% else %}
-                                <label id="ex_first_tag_radio"><input type="radio" name="ex_first_tag_choice" value="{{i}}">{{i}}</label>
+                                <label class="btn btn-sm btn-primary btn-simple" id="ex_first_tag_radio"><input type="radio" name="ex_first_tag_choice" value="{{i}}">{{i}}</label>
                             {% endif %}
                         {% endfor %}
                     </div>
                 </div>
                 <div class="card-body">
                     <div class="chart-area-bottom">
-
                         <canvas id="ex_second_tag"></canvas>
                     </div>
                 </div>

@@ -14,10 +14,19 @@ def board(request):
     if request.user.is_authenticated:
         userID = str(request.user)
         context = dict()
-        last_file = DataTable.objects.filter(member_id=userID).aggregate(new_file_name=Max('new_file_name'))['new_file_name']
-        data = ProTable.objects.filter(member_id=userID, new_file_name=last_file).values('id', 'trans_dtime', 'trans_md',
-                                                                                         'ats_kdcd_dtl', 'ori_text',
-                                                                                         'first_tag', 'second_tag')
+        context['file_list'] = DataTable.objects.filter(member_id=userID).values('new_file_name')
+
+        if request.method == "GET":
+            last_file = DataTable.objects.filter(member_id=userID).aggregate(new_file_name=Max('new_file_name'))['new_file_name']
+            data = ProTable.objects.filter(member_id=userID, new_file_name=last_file).values('id', 'trans_dtime', 'trans_md',
+                                                                                             'ats_kdcd_dtl', 'ori_text',
+                                                                                             'first_tag', 'second_tag')
+        elif request.method == "POST":
+            select_file = request.POST["select_file"]
+            data = ProTable.objects.filter(member_id=userID, new_file_name=select_file).values('id', 'trans_dtime', 'trans_md',
+                                                                                                'ats_kdcd_dtl', 'ori_text',
+                                                                                                'first_tag', 'second_tag')
+
         data = pd.DataFrame(list(data))
         if len(data) == 0:
             render(request, 'page-404.html')
@@ -58,10 +67,10 @@ def board(request):
                 temp = ex_data[ex_data['first_tag'] == i]
                 context['출금'][i] = temp.groupby('second_tag')['id'].count().to_dict()
 
-
-            # return JsonResponse(data=context, status=200)
             return render(request, 'UI-DB-00-00.html', context)
-            # return HttpResponse(json.dumps(context, ensure_ascii=False), content_type=u"application/json; charset=utf-8")
+
+
+
     else:
         return render(request, 'page-401.html')
 

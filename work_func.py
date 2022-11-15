@@ -123,7 +123,7 @@ if __name__ == '__main__':
 
     num_cores = 4
     df = parallel_dataframe(df, work_func, num_cores)
-    df.to_csv(save_path, encoding='utf-8-sig')
+    # df.to_csv(save_path, encoding='utf-8-sig')
     del df
 
 

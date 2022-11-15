@@ -1,21 +1,13 @@
-<!doctype html>
 {% extends 'base.html' %}
+{% block content %}
 {% load static %}
-
-
 <script src="{% static 'p/js/jquery.event.drag-1.7.1.min.js' %}"></script>
 <script src="{% static 'p/js/ajax.js' %}"></script>
 <script src="{% static 'p/js/nic_ui.js' %}"></script>
 
-<html lang="ko">
-
-<head>
-</head>
- <body>
-  {% block content %}
-  <div class="content">
-	<!-- 헤더 -->
-	  <div class="tag-box">
+<div class="content">
+<!-- 헤더 -->
+  <div class="tag-box">
 	<div class="header">
 		<div class="h_inner">
 			<span href="#" class="logo_ats"></span>
@@ -25,9 +17,8 @@
 			</form>
 			<a type="button" class="btn_X" href="{% url 'home' %}"></a>
 		</div>
-
 	</div>
-	<!--// 헤더 -->
+<!--// 헤더 -->
 
 
 	<!-- 이력 팝 -->
@@ -39,8 +30,8 @@
 		<div class="history_list">
 			<ul>
 				<li>태깅데이터</li>
-<!--				<li>시작시간</li>-->
-<!--				<li>종료시간</li>-->
+	<!--				<li>시작시간</li>-->
+	<!--				<li>종료시간</li>-->
 				<li>처리시간</li>
 				<li>처리건수</li>
 				<li>결과</li>
@@ -59,8 +50,8 @@
 					</form>
 
 				</li>
-<!--				<li>{{i.start_dtime}}</li>-->
-<!--				<li>{{i.end_dtime}}</li>-->
+	<!--				<li>{{i.start_dtime}}</li>-->
+	<!--				<li>{{i.end_dtime}}</li>-->
 				<li>{{i.start_dtime}}</li>
 				<li>{{i.data_len}}</li>
 				<li>{{i.pro_result}}</li>
@@ -79,7 +70,7 @@
 		태깅이 완료될 때 까지 현재 창을 유지해 주세요.</span>
 	</div>
 	<i class="modal"></i>
-	 <!--// 이력 팝업 -->
+ <!--// 이력 팝업 -->
 
 
 	<!-- 컨텐츠 -->
@@ -120,7 +111,6 @@
 			</div>
 		</div>
 	</div>
-  </div></div>
-  {% endblock content %}
- </body>
-</html>
+  </div>
+</div>
+{% endblock content %}
