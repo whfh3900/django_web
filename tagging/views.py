@@ -228,7 +228,7 @@ def tagging(request):
                 elif platform.system() == 'Linux':
                     # subprocess.run('bash -c "conda activate ats; python3 -V"', shell=True)
                     # subprocess.run('bash -c "python3 /home/manager/django_web/work_func.py %s %s %s"' % (userID, file_name, new_file_name), shell=True)
-                    os.system('python3 work_func.py %s %s %s' % (userID, file_name, new_file_name))
+                    os.system('python3 /home/manager/django_web/work_func.py %s %s %s' % (userID, file_name, new_file_name))
             except Exception as e:
                 print(e)
                 

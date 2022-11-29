@@ -118,7 +118,7 @@ if __name__ == '__main__':
     else:
         save_path = '/home/manager/django_web/save/%s' % new_file_name
 
-    num_cores = 4
+    num_cores = 8
     df = parallel_dataframe(df, work_func, num_cores)
     df.to_csv(save_path, encoding='utf-8-sig')
     del df
