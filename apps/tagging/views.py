@@ -215,6 +215,7 @@ def tagging(request):
                 # 태깅후 data table 입력
                 datatable.pro_result = '완료'
 
+
             except Exception as e:
                 # 태깅후 data table 입력
                 datatable.pro_result = '에러'
@@ -309,3 +310,5 @@ def history_download(request):
         else:
             return render(request, 'page-401.html')
 
+        response['Content-Disposition'] = 'attachment; filename="{}"'.format('다운로드.pdf')
+        return response
