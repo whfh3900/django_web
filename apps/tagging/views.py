@@ -115,117 +115,115 @@ def tagging(request):
             datatable.save()
 
 
-            # 이전버젼 ##############################################
-            # media 폴더에 저장된 파일 바로삭제
-            # default_storage.delete(path)
-            # df = pd.DataFrame(columns=["index", "거래구분", "거래유형", "적요", "대분류", "중분류", "비고"])
-            # nk = Nickonlpy()
-            # nwt = NicWordTagging()
-            # trans_md = False
-            # ats_kdcd_dtl = False
-            # for i,n in enumerate(tqdm(chunk_list)):
-            #     df.at[int(i/3), "index"] = int(i/3)
-            #     if i%3 == 0:
-            #         df.at[int(i / 3), "거래구분"] = n
-            #         if n in ['1', '2']:
-            #             trans_md = n
-            #         else:
-            #             trans_md = 'e'
-            #
-            #     if i%3 == 1:
-            #         df.at[int(i / 3), "거래유형"] = n
-            #         ats_kdcd_dtl = n
-            #
-            #     if i%3 == 2:
-            #         protable = ProTable()
-            #         protable.member_id = userID
-            #         protable.file_name = file_name
-            #         protable.new_file_name = new_file_name
-            #         protable.trans_md = trans_md
-            #         protable.ats_kdcd_dtl = ats_kdcd_dtl
-            #         protable.ori_text = n
-            #         df.at[int(i/3), "적요"] = n
-            #
-            #         # preprocessing
-            #         text = find_null(n)
-            #         text = ascii_check(text)
-            #         text = change_upper(text)
-            #         text = space_delete(text)
-            #         text = remove_bank(text)
-            #         text = corporatebody(text)
-            #         text = numbers_to_zero(text)
-            #         text = remove_specialchar(text)
-            #         text = nk.predict_tokennize(text)
-            #
-            #         # 정상일때 #######################################
-            #         if (trans_md != 'e') and (text not in ["", " ", "  "]):
-            #             # tagging
-            #             result = nwt.text_tagging(text, trans_md)
-            #             text = nk.name_check(text)
-            #             protable.pro_text = text
-            #             protable.first_tag = result[0]
-            #             protable.second_tag = result[1]
-            #             df.at[int(i/3), "대분류"] = result[0]
-            #             df.at[int(i/3), "중분류"] = result[1]
-            #             trans_md = False
-            #             protable.note = "000"
-            #
-            #         # 적요가 공백일때 #################################
-            #         elif (trans_md != 'e') and (text in ["", " ", "  "]):
-            #             protable.pro_text = text
-            #             protable.first_tag = "공백"
-            #             protable.second_tag = "공백"
-            #             df.at[int(i/3), "대분류"] = ""
-            #             df.at[int(i/3), "중분류"] = ""
-            #             protable.note = "200"
-            #
-            #         # 거래구분이 이상할 때 ############################
-            #         elif trans_md == 'e':
-            #             protable.pro_text = text
-            #             protable.first_tag = ""
-            #             protable.second_tag = ""
-            #             df.at[int(i/3), "대분류"] = ""
-            #             df.at[int(i/3), "중분류"] = ""
-            #             protable.note = "333"
-            #
-            #         protable.event_dtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            #         protable.save()
-            # if platform.system() == 'Windows':
-            #     df.to_csv('./save/%s' % new_file_name, encoding="utf-8-sig", index=False)
-            # elif platform.system() == 'Linux':
-            #     df.to_csv('/home/manager/django_web/save/%s' % new_file_name, encoding='utf-8-sig', index=False)
-            ###############################################################
+            이전버젼 ##############################################
+            media 폴더에 저장된 파일 바로삭제
+            default_storage.delete(path)
+            df = pd.DataFrame(columns=["index", "거래구분", "거래유형", "적요", "대분류", "중분류", "비고"])
+            nk = Nickonlpy()
+            nwt = NicWordTagging()
+            trans_md = False
+            ats_kdcd_dtl = False
+            for i,n in enumerate(tqdm(chunk_list)):
+                df.at[int(i/3), "index"] = int(i/3)
+                if i%3 == 0:
+                    df.at[int(i / 3), "거래구분"] = n
+                    if n in ['1', '2']:
+                        trans_md = n
+                    else:
+                        trans_md = 'e'
+            
+                if i%3 == 1:
+                    df.at[int(i / 3), "거래유형"] = n
+                    ats_kdcd_dtl = n
+            
+                if i%3 == 2:
+                    protable = ProTable()
+                    protable.member_id = userID
+                    protable.file_name = file_name
+                    protable.new_file_name = new_file_name
+                    protable.trans_md = trans_md
+                    protable.ats_kdcd_dtl = ats_kdcd_dtl
+                    protable.ori_text = n
+                    df.at[int(i/3), "적요"] = n
+            
+                    # preprocessing
+                    text = find_null(n)
+                    text = ascii_check(text)
+                    text = change_upper(text)
+                    text = space_delete(text)
+                    text = remove_bank(text)
+                    text = corporatebody(text)
+                    text = numbers_to_zero(text)
+                    text = remove_specialchar(text)
+                    text = nk.predict_tokennize(text)
+            
+                    # 정상일때 #######################################
+                    if (trans_md != 'e') and (text not in ["", " ", "  "]):
+                        # tagging
+                        result = nwt.text_tagging(text, trans_md)
+                        text = nk.name_check(text)
+                        protable.pro_text = text
+                        protable.first_tag = result[0]
+                        protable.second_tag = result[1]
+                        df.at[int(i/3), "대분류"] = result[0]
+                        df.at[int(i/3), "중분류"] = result[1]
+                        trans_md = False
+                        protable.note = "000"
+            
+                    # 적요가 공백일때 #################################
+                    elif (trans_md != 'e') and (text in ["", " ", "  "]):
+                        protable.pro_text = text
+                        protable.first_tag = "공백"
+                        protable.second_tag = "공백"
+                        df.at[int(i/3), "대분류"] = ""
+                        df.at[int(i/3), "중분류"] = ""
+                        protable.note = "200"
+            
+                    # 거래구분이 이상할 때 ############################
+                    elif trans_md == 'e':
+                        protable.pro_text = text
+                        protable.first_tag = ""
+                        protable.second_tag = ""
+                        df.at[int(i/3), "대분류"] = ""
+                        df.at[int(i/3), "중분류"] = ""
+                        protable.note = "333"
+            
+                    protable.event_dtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    protable.save()
+            if platform.system() == 'Windows':
+                df.to_csv('./save/%s' % new_file_name, encoding="utf-8-sig", index=False)
+            elif platform.system() == 'Linux':
+                df.to_csv('/home/manager/django_web/save/%s' % new_file_name, encoding='utf-8-sig', index=False)
+            ##############################################################
 
 
             # 현재버젼 Test중 ##############################################
-            if platform.system() == 'Windows':
-                media_path = './media/%s' % file_name
-            elif platform.system() == 'Linux':
-                media_path = '/home/manager/django_web/media/%s' % file_name
-            else:
-                media_path = '/home/manager/django_web/media/%s' % file_name
+            # if platform.system() == 'Windows':
+                # media_path = './media/%s' % file_name
+            # elif platform.system() == 'Linux':
+                # media_path = '/home/manager/django_web/media/%s' % file_name
+            # else:
+                # media_path = '/home/manager/django_web/media/%s' % file_name
 
-            try:
-                if platform.system() == 'Windows':
-                    os.system('python work_func.py %s %s %s' % (userID, file_name, new_file_name))
-                elif platform.system() == 'Linux':
-                    # subprocess.run('bash -c "conda activate ats; python3 -V"', shell=True)
-                    # subprocess.run('bash -c "python3 /home/manager/django_web/work_func.py %s %s %s"' % (userID, file_name, new_file_name), shell=True)
-                    os.system('python3 /home/manager/django_web/work_func.py %s %s %s' % (userID, file_name, new_file_name))
+            # try:
+                # if platform.system() == 'Windows':
+                    # os.system('python work_func.py %s %s %s' % (userID, file_name, new_file_name))
+                # elif platform.system() == 'Linux':
+                    # os.system('python3 /home/manager/django_web/work_func.py %s %s %s' % (userID, file_name, new_file_name))
                 # 태깅후 data table 입력
-                datatable.pro_result = '완료'
+                # datatable.pro_result = '완료'
 
 
-            except Exception as e:
+            # except Exception as e:
                 # 태깅후 data table 입력
-                datatable.pro_result = '에러'
-                datatable.note = e
+                # datatable.pro_result = '에러'
+                # datatable.note = e
 
             # 작업파일 삭제
-            if os.path.exists(media_path):
-                os.remove(media_path)
-            datatable.end_dtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            datatable.save()
+            # if os.path.exists(media_path):
+                # os.remove(media_path)
+            # datatable.end_dtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            # datatable.save()
             ###############################################################
 
             return JsonResponse({"filename": new_file_name}, status=200)
