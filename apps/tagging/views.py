@@ -8,9 +8,9 @@ from django.core.files.storage import FileSystemStorage, default_storage
 # from django.contrib import messages
 
 # 이전버젼 ############################
-# from ats_module.TextPreprocessing import *
-# from ats_module.TextTagging import *
-# from tqdm import tqdm
+from ats_module.TextPreprocessing import *
+from ats_module.TextTagging import *
+from tqdm import tqdm
 ######################################
 import sys
 import os
@@ -115,8 +115,8 @@ def tagging(request):
             datatable.save()
 
 
-            이전버젼 ##############################################
-            media 폴더에 저장된 파일 바로삭제
+            # 이전버젼 ##############################################
+            # media 폴더에 저장된 파일 바로삭제
             default_storage.delete(path)
             df = pd.DataFrame(columns=["index", "거래구분", "거래유형", "적요", "대분류", "중분류", "비고"])
             nk = Nickonlpy()
