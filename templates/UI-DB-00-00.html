@@ -1,0 +1,492 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+<script src="{% static 'p/js/jquery-3.1.0.min.js' %}"></script>
+
+
+<!--    타임라인 그래프-->
+<div class="content">
+    <div class="row">
+        <div>
+            <form id="board_select" method="POST" action="{% url 'board' %}" enctype="multipart/form-data">
+                <select name="select_file">
+                    <option value="none">============= 선택 =============</option>
+                    {% for i in file_list %}
+                        <option value="{{i.new_file_name}}">{{i.new_file_name}}</option>
+                    {% endfor %}
+                </select>
+                <input type="submit" name="select_file_name" id="select_file_name" value="show"/>
+            </form>
+        </div>
+
+        <div class="col-12">
+            <div class="card card-chart">
+                <div class="card-header ">
+                    <div class="row">
+                        <div class="col-sm-6 text-left">
+                            <h5 class="card-category"></h5>
+                            <h2 class="card-title">총 거래량</h2>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="btn-group btn-group-toggle float-right" id="options_radio" data-toggle="buttons">
+                                <label class="btn btn-sm btn-primary btn-simple active" id="time_line_view_all">
+                                    <input type="radio" name="time_line_options" checked>
+                                    <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">전체</span>
+                                    <span class="d-block d-sm-none">
+                                        <i class="tim-icons icon-single-02"></i>
+                                    </span>
+                                </label>
+                                <label class="btn btn-sm btn-primary btn-simple" id="time_line_view_de">
+                                    <input type="radio" class="d-none d-sm-none" name="time_line_options">
+                                    <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">입금</span>
+                                    <span class="d-block d-sm-none">
+                                        <i class="tim-icons icon-gift-2"></i>
+                                    </span>
+                                </label>
+                                <label class="btn btn-sm btn-primary btn-simple" id="time_line_view_ex">
+                                    <input type="radio" class="d-none" name="time_line_options">
+                                    <span class="d-none d-sm-block d-md-block d-lg-block d-xl-block">지급</span>
+                                    <span class="d-block d-sm-none">
+                                        <i class="tim-icons icon-tap-02"></i>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area-top">
+                        <canvas id="time_line"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card card-chart">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="tim-icons icon-bell-55 text-primary"></i>입금 거래량</h3>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="de_first_tag"></canvas>
+                    </div>
+                </div>
+                <div style="margin-bottom:20px; margin-right:10px;">
+                    <div class="float-right" id="de_choice_radio" data-toggle="buttons">
+                        {% for i in de_first_tag_labels %}
+                            {% if forloop.first %}
+                                <label class="btn btn-sm btn-primary btn-simple active" id="de_first_tag_radio"><input type="radio" name="de_first_tag_choice" value="{{i}}" checked>{{i}}</label>
+                            {% else %}
+                                <label class="btn btn-sm btn-primary btn-simple" id="de_first_tag_radio"><input type="radio" name="de_first_tag_choice" value="{{i}}">{{i}}</label>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area-bottom">
+
+                        <canvas id="de_second_tag"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card card-chart">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="tim-icons icon-bell-55 text-primary"></i>출금 거래량</h3>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="ex_first_tag"></canvas>
+                    </div>
+                </div>
+                <div style="margin-bottom:20px; margin-right:10px;">
+                    <div id="ex_choice_radio" data-toggle="buttons">
+                        {% for i in ex_first_tag_labels %}
+                            {% if forloop.first %}
+                                <label class="btn btn-sm btn-primary btn-simple active" id="ex_first_tag_radio"><input type="radio" name="ex_first_tag_choice" value="{{i}}" checked>{{i}}</label>
+                            {% else %}
+                                <label class="btn btn-sm btn-primary btn-simple" id="ex_first_tag_radio"><input type="radio" name="ex_first_tag_choice" value="{{i}}">{{i}}</label>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area-bottom">
+                        <canvas id="ex_second_tag"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+<!--    입출금 대분류 파이 그래프-->
+
+<!---->
+    </div>
+    </div>
+
+</div>
+<!---->
+
+    <script>
+        gradientChartOptionsConfigurationWithTooltipPurple = {
+      maintainAspectRatio: false,
+      legend: {
+        display: false
+      },
+
+      tooltips: {
+        backgroundColor: '#f5f5f5',
+        titleFontColor: '#333',
+        bodyFontColor: '#666',
+        bodySpacing: 4,
+        xPadding: 12,
+        mode: "nearest",
+        intersect: 0,
+        position: "nearest"
+      },
+      responsive: true,
+      scales: {
+        yAxes: [{
+          barPercentage: 1.6,
+          gridLines: {
+            drawBorder: false,
+            color: 'rgba(29,140,248,0.0)',
+            zeroLineColor: "transparent",
+          },
+          ticks: {
+
+            padding: 20,
+            fontColor: "#9a9a9a"
+          }
+        }],
+
+        xAxes: [{
+          barPercentage: 1.6,
+          gridLines: {
+            drawBorder: false,
+            color: 'rgba(225,78,202,0.1)',
+            zeroLineColor: "transparent",
+          },
+          ticks: {
+            padding: 20,
+            fontColor: "#9a9a9a"
+          }
+        }]
+      }
+    };
+    gradientBarChartConfiguration = {
+      maintainAspectRatio: false,
+      legend: {
+        display: false
+      },
+
+      tooltips: {
+        backgroundColor: '#f5f5f5',
+        titleFontColor: '#333',
+        bodyFontColor: '#666',
+        bodySpacing: 4,
+        xPadding: 12,
+        mode: "nearest",
+        intersect: 0,
+        position: "nearest"
+      },
+      responsive: true,
+      scales: {
+        yAxes: [{
+
+          gridLines: {
+            drawBorder: false,
+            color: 'rgba(29,140,248,0.1)',
+            zeroLineColor: "transparent",
+          },
+          ticks: {
+
+            padding: 20,
+            fontColor: "#9e9e9e"
+          }
+        }],
+
+        xAxes: [{
+
+          gridLines: {
+            drawBorder: false,
+            color: 'rgba(29,140,248,0.1)',
+            zeroLineColor: "transparent",
+          },
+          ticks: {
+            padding: 20,
+            fontColor: "#9e9e9e"
+          }
+        }]
+      }
+    };
+<!--        타임라인 그래프-->
+        var time_line_ctx = document.getElementById('time_line').getContext('2d');
+        var all_time_line_data = {{all_time_line_data|safe}};
+        var all_time_line_labels = {{all_time_line_labels|safe}};
+
+        var time_line_config = {
+          type: 'line',
+          data: {
+            datasets: [{
+              data: all_time_line_data,
+              fill: true,
+              borderColor: '#d346b1',
+              borderWidth: 2,
+              borderDash: [],
+              borderDashOffset: 0.0,
+              pointBackgroundColor: '#d346b1',
+              pointBorderColor: 'rgba(255,255,255,0)',
+              pointHoverBackgroundColor: '#d346b1',
+              pointBorderWidth: 20,
+              pointHoverRadius: 4,
+              pointHoverBorderWidth: 15,
+              pointRadius: 4,
+              label: '거래량'
+            }],
+            labels: all_time_line_labels
+          },
+          options: gradientChartOptionsConfigurationWithTooltipPurple
+        };
+
+        var time_line_graph = new Chart(time_line_ctx, time_line_config);
+
+        $("#time_line_view_all").click(function() {
+          var data = time_line_graph.config.data;
+          data.datasets[0].data = all_time_line_data;
+          data.labels = all_time_line_labels;
+          time_line_graph.update();
+        });
+
+        $("#time_line_view_de").click(function() {
+          var data = time_line_graph.config.data;
+          var de_time_line_data = {{de_time_line_data|safe}};
+          var de_time_line_labels = {{de_time_line_labels|safe}};
+          data.datasets[0].data = de_time_line_data;
+          data.labels = de_time_line_labels;
+          time_line_graph.update();
+        });
+
+        $("#time_line_view_ex").click(function() {
+          var data = time_line_graph.config.data;
+          var ex_time_line_data = {{ex_time_line_data|safe}};
+          var ex_time_line_labels = {{ex_time_line_labels|safe}};
+          data.datasets[0].data = ex_time_line_data;
+          data.labels = ex_time_line_labels;
+          time_line_graph.update();
+        });
+<!---->
+<!--        입금파이 그래프-->
+        var de_pie_ctx = document.getElementById('de_first_tag').getContext('2d');
+        var de_pie_data = {{de_first_tag_data|safe}};
+        var de_pie_labels = {{de_first_tag_labels|safe}};
+        var de_pie_config = {
+          type: 'pie',
+          data: {
+            datasets: [{
+              data: de_pie_data,
+              fill: true,
+              borderColor: '#d346b1',
+              borderWidth: 2,
+              borderDash: [],
+              borderDashOffset: 0.0,
+              pointBackgroundColor: '#d346b1',
+              pointBorderColor: 'rgba(255,255,255,0)',
+              pointHoverBackgroundColor: '#d346b1',
+              pointBorderWidth: 20,
+              pointHoverRadius: 4,
+              pointHoverBorderWidth: 15,
+              pointRadius: 4,
+              label: '거래량'
+            }],
+            labels: de_pie_labels
+          },
+          options: {
+            legend:{display:false},
+            responsive: true,
+            maintainAspectRatio: false,
+          }
+        };
+
+        var de_pie_graph = new Chart(de_pie_ctx, de_pie_config);
+<!---->
+<!--        출금파이 그래프-->
+        var ex_pie_ctx = document.getElementById('ex_first_tag').getContext('2d');
+        var ex_pie_data = {{ex_first_tag_data|safe}};
+        var ex_pie_labels = {{ex_first_tag_labels|safe}};
+        var ex_pie_config = {
+          type: 'pie',
+          data: {
+            datasets: [{
+              data: ex_pie_data,
+              fill: true,
+              borderColor: '#d346b1',
+              borderWidth: 2,
+              borderDash: [],
+              borderDashOffset: 0.0,
+              pointBackgroundColor: '#d346b1',
+              pointBorderColor: 'rgba(255,255,255,0)',
+              pointHoverBackgroundColor: '#d346b1',
+              pointBorderWidth: 20,
+              pointHoverRadius: 4,
+              pointHoverBorderWidth: 15,
+              pointRadius: 4,
+              label: '거래량'
+            }],
+            labels: ex_pie_labels
+          },
+          options: {
+            responsive: true
+          }
+        };
+
+        var ex_pie_graph = new Chart(ex_pie_ctx, ex_pie_config);
+<!---->
+
+<!--        입금바 그래프-->
+        var de_bar_ctx = document.getElementById('de_second_tag').getContext('2d');
+        var value = $('input[name="de_first_tag_choice"]:checked').val();              // value
+        var de_dict = {{입금|safe}};
+        var de_value_dict = de_dict[value];
+        var de_label = Object.keys(de_value_dict);
+        var de_labels = new Array();
+        var de_data = new Array();
+
+        for (var i in de_label){
+            de_labels.push(de_label[i]);
+        }
+        for (var i in de_value_dict){
+            de_data.push(de_value_dict[i]);
+        }
+
+        var de_bar_config = {
+          type: 'bar',
+          data: {
+            datasets: [{
+              data: de_data,
+              fill: true,
+              borderColor: '#d346b1',
+              borderWidth: 2,
+              borderDash: [],
+              borderDashOffset: 0.0,
+              pointBackgroundColor: '#d346b1',
+              pointBorderColor: 'rgba(255,255,255,0)',
+              pointHoverBackgroundColor: '#d346b1',
+              pointBorderWidth: 20,
+              pointHoverRadius: 4,
+              pointHoverBorderWidth: 15,
+              pointRadius: 4,
+              label: '거래량'
+            }],
+            labels: de_labels
+          },
+          options: gradientBarChartConfiguration
+        };
+
+        var de_bar_graph = new Chart(de_bar_ctx, de_bar_config);
+
+
+        $('input[name="de_first_tag_choice"]').change(function() {
+            var value = $(this).val();              // value
+            var de_value_dict = de_dict[value];
+            var data = de_bar_graph.config.data;
+
+
+            var de_label = Object.keys(de_value_dict);
+            var de_labels = new Array();
+            var de_data = new Array();
+
+            for (var i in de_label){
+                de_labels.push(de_label[i]);
+            }
+            for (var i in de_value_dict){
+                de_data.push(de_value_dict[i]);
+            }
+
+            data.datasets[0].data = de_data;
+            data.labels = de_labels;
+            de_bar_graph.update();
+
+        });
+<!---->
+
+<!--        출금바 그래프-->
+        var ex_bar_ctx = document.getElementById('ex_second_tag').getContext('2d');
+        var value = $('input[name="ex_first_tag_choice"]:checked').val();              // value
+        var ex_dict = {{출금|safe}};
+        var ex_value_dict = ex_dict[value];
+        var ex_label = Object.keys(ex_value_dict);
+        var ex_labels = new Array();
+        var ex_data = new Array();
+
+        for (var i in ex_label){
+            ex_labels.push(ex_label[i]);
+        }
+        for (var i in ex_value_dict){
+            ex_data.push(ex_value_dict[i]);
+        }
+
+        var ex_bar_config = {
+          type: 'bar',
+          data: {
+            datasets: [{
+              data: ex_data,
+              fill: true,
+              borderColor: '#d346b1',
+              borderWidth: 2,
+              borderDash: [],
+              borderDashOffset: 0.0,
+              pointBackgroundColor: '#d346b1',
+              pointBorderColor: 'rgba(255,255,255,0)',
+              pointHoverBackgroundColor: '#d346b1',
+              pointBorderWidth: 20,
+              pointHoverRadius: 4,
+              pointHoverBorderWidth: 15,
+              pointRadius: 4,
+              label: '거래량'
+            }],
+            labels: ex_labels
+          },
+          options: {
+            responsive: true
+          }
+        };
+
+        var ex_bar_graph = new Chart(ex_bar_ctx, ex_bar_config);
+
+
+        $('input[name="ex_first_tag_choice"]').change(function() {
+            var value = $(this).val();              // value
+            var ex_value_dict = ex_dict[value];
+            var data = ex_bar_graph.config.data;
+
+
+            var ex_label = Object.keys(ex_value_dict);
+            var ex_labels = new Array();
+            var ex_data = new Array();
+
+            for (var i in ex_label){
+                ex_labels.push(ex_label[i]);
+            }
+            for (var i in ex_value_dict){
+                ex_data.push(ex_value_dict[i]);
+            }
+
+            data.datasets[0].data = ex_data;
+            data.labels = ex_labels;
+            ex_bar_graph.update();
+
+        });
+<!---->
+
+
+    </script>
+{% endblock %}
+
+
+

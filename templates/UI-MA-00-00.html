@@ -1,0 +1,95 @@
+<!doctype html>
+{% load static %}
+<html lang="ko">
+ <head>
+  	<meta charset="UTF-8">
+	 
+  	<meta name="Author" content="">
+  	<meta name="Keywords" content="">
+  	<meta name="Description" content="">
+
+  	<title>Real? ATS</title>
+
+	<link href="{% static 'p/css/ats.css' %}" rel="stylesheet">
+	<script src="{% static 'p/js/jquery-3.1.0.min.js' %}"></script>
+	<script src="{% static 'p/js/nic_ui.js' %}"></script> 
+
+ </head>
+ <body>
+  
+  <div id="wrap" >
+	
+	<!-- 헤더 -->
+	<div class="header">
+		<div class="h_inner">
+			<span href="#" class="logo_ats"></span>
+			<a type="button" class="ats_start" href="{% url 'ats_login' %}">리얼?ATS 시작하기</a>
+		</div>
+	</div>	
+	<!--// 헤더 -->	
+
+	<!-- 컨텐츠 -->
+	<div class="Section_01">
+		<div class="text_area01">
+			<span class="text_l_01"><span class="cGrey">해석이 어려운</span>
+				입출금 적요데이터,
+				활용이 가능하도록.
+			</span>
+
+			<span class="text_s_01">금융데이터 분석 노하우로 닉컴퍼니가 구축한 <span class="cBlue">적요 용어사전</span>을 <span class="cBlue">기계학습 알고리즘</span>에 적용.</span>
+			<span class="text_m_01">60여종의 테마로 입출금 카테고리 자동 분류</span>
+			<form action="{% url 'introduction_download' %}" method="post" target="_blank">
+				<input type="submit" class="btn_dn" value="리얼?ATS 소개서 다운로드">
+			</form>
+			
+			
+		</div>
+		<div class="text_area02">
+			<span class="text_l_02">적요의 의미를 알면
+				금융서비스가
+				좋아집니다.
+			</span>
+			<span class="text_s_02">수입과 지출을 알면 디지털 자산관리 서비스의 품질을 높일 수 있습니다.
+				고객의 재정상태를 파악하여  금융상품 컨설팅을 할 수 있습니다.
+			</span>
+			<span class="text_m_02">고객은 자신에게 맞는 금융서비스를 찾아갑니다.</span>
+		</div>
+		<div class="text_area03">
+			<span class="text_l_03">리얼?ATS와 
+				함께 하세요.
+			</span>
+			<div class="area03">
+				<div class="area03_b02">
+					<span class="text_m2">금융데이터 분석 기술력</span><br/>
+					<span class="text_s2">검증받은 거래분석 알고리즘
+						금융데이터 분석 노하우로 구축한 적요용어사전
+					</span>
+				</div>
+				<div class="area03_b01">
+					<span class="text_m2">안전한 서비스</span><br/>
+					<span class="text_s2">금융클라우드에 탑재하여 안심할 수 있습니다.
+						개인정보는 수집하지 않습니다.
+					</span>
+				</div>
+			</div>
+		</div>
+		<!-- div class="login_area">			
+			<span class="txt_cGrey">발급된 계정으로 로그인 하세요.</span>
+			<input class="input_id" name="userID" type="text" placeholder="ID"/>
+			<input class="input_id" name="password" type="password" placeholder="Password"/>
+			<button type="button" class="btn_01">로그인</button>
+		</div-->
+	</div>
+	<!--// 컨텐츠 -->
+
+	<!-- 푸터 -->
+	<div class="footer_w">
+		<p>ⓒ NIC company</p>
+		<a href="http://www.niccompany.co.kr" target="_blank"></a>
+	</div>	  
+	<!--// 푸터 -->
+
+  </div>
+
+ </body>
+</html>
