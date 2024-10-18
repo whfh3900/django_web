@@ -36,7 +36,7 @@
 엑셀(.csv) 파일을 아래 이미지와 같은 형식으로 준비해주세요.  
 
 <p align="center">
-  <img src="./png/img_ex.png" alt="data sample image" width="200">
+  <img src="./png/img_ex.png" alt="data sample image" width="300">
 </p>
 
 <br>
